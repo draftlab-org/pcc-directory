@@ -1,6 +1,6 @@
 import Pinecone from '@platform-coop-toolkit/pinecone';
 const d3 = Object.assign({}, require('d3-scale')/*, require('d3-selection'), require('d3-array'), require('d3-shape')*/);
-import { generateCards, generatePopupHtml, updateStore } from './cards.js';
+import { generateCards, generatePopupHtml, updateStore, generateMapsIdicatorsCards, setMapsIdicators } from './cards.js';
 
 const menu = document.querySelector('.menu');
 const menuToggle = document.querySelector('.menu-toggle');
@@ -862,3 +862,11 @@ if (mainMapContainer) {
     // });
   });
 }
+
+console.log('generateMapsIdicatorsCards');
+generateMapsIdicatorsCards();
+
+// Fetch data of indicators from the api
+fetch('/api/organizations/indicators/')
+  .then(res => res.json())
+  .then( data => setMapsIdicators(data));
