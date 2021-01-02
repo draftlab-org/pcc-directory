@@ -1,6 +1,7 @@
 import Cards from './components/Cards.svelte';
+import CardsIndicators from './components/CardsIndicators.svelte';
 import Popup from './components/Popup.svelte';
-import { features } from './store.js';
+import { features, maps_indicators } from './store.js';
 
 /**
  * Instantiate the Svelte container for organization and individual cards below the map.
@@ -35,3 +36,17 @@ export const generatePopupHtml = (f) => {
   });
   return popup.innerHTML;
 };
+
+
+/**
+ * Instantiate the Svelte container for indicators cards above the map.
+ */
+export const generateMapsIdicatorsCards = () => {
+  new CardsIndicators({
+    target: document.getElementById('maps-indicators')
+  });
+};
+
+export const setMapsIdicators = (idicators) => {
+  maps_indicators.set(idicators);
+}
