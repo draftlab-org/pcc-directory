@@ -2,11 +2,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.shortcuts import render, reverse
 from django.http import HttpResponse
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
-from .serializers import UserSerializer, GroupSerializer, OrganizationSerializer, SectorSerializer, ToolSerializer
+from rest_framework.decorators import action
+from .serializers import UserSerializer, GroupSerializer, OrganizationSerializer, SectorSerializer, ToolSerializer, OrganizationIndicatorsSerializer
 from .models import Organization, Sector, Tool, License
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 
 
 def map(request):
@@ -67,3 +69,15 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()  # filter(geom__isnull=False)
     serializer_class = OrganizationSerializer
     http_method_names = ['get', ]
+    
+    @swagger_auto_schema(
+        responses={ status.HTTP_200_OK: OrganizationIndicatorsSerializer }
+    )
+    @action(detail=False, methods=['get'])
+    def indicators(self, request, *args, **kwargs):
+        data = { 
+            'countries': len(set(self.queryset.exclude(country='').values_list('country', flat=True))),
+            'projects': self.queryset.count()
+        }
+        serializer = OrganizationIndicatorsSerializer(data)
+        return Response(serializer.data)

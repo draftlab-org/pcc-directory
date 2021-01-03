@@ -138,3 +138,10 @@ class OrganizationSerializer(GeoFeatureModelSerializer):
             'tools',
             'source',
         )
+
+class OrganizationIndicatorsSerializer(serializers.Serializer):
+    countries = serializers.IntegerField()
+    projects = serializers.IntegerField()
+
+    class Meta:
+        fields = ('countries', 'projects')
