@@ -819,12 +819,6 @@ h1 + .profile__meta {
   }
 }
 
-@media (min-width: 80rem) {
-  .page-header {
-    grid-column: 4/10;
-    width: 46%;
-  }
-}
 @media (min-width: 120rem) {
   .page-header {
     grid-column: 4/10;
