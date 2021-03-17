@@ -427,7 +427,7 @@ if (mainMapContainer) {
   var mainMap = new mapboxgl.Map({
     container: 'main-map',
     style: `${process.env.MAP_ASSETS_BASE_URL}/static/maps/dist/styles/pcc/style.json`,
-    center: [43.9, -93.6],
+    center: [43.9, -90],
     minZoom: 0,
     maxZoom: 15.0,
     zoom: 1,
