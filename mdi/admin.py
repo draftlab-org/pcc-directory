@@ -112,11 +112,13 @@ class OrganizationAdminMemberAdmin(admin.ModelAdmin):
         return obj.member.get_full_name()
     admin_member.short_description = 'Member Name'
     admin_member.empty_value_display = '---'
+    admin_member.admin_order_field = 'member__name'
     
     def admin_member_email(self, obj):
         return obj.member.email
     admin_member_email.short_description = 'Member Email'
     admin_member_email.empty_value_display = '---'
+    admin_member_email.admin_order_field = 'member__email'
     
     def make_approved(self, request, queryset):
         """Set request to approved."""
