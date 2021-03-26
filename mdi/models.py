@@ -363,6 +363,19 @@ class OrganizationSocialNetwork(models.Model):
 
     class Meta:
         verbose_name = "Organization's Social Network"
+        
+        
+class OrganizationAdminMember(models.Model):
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    member = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    approved = models.BooleanField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Organization and Admin Relationship"
+        verbose_name_plural = "Organizations and Admins Relationships"
+        ordering = ['-approved', '-created_at']
 
 
 class EntitiesEntities(models.Model):
