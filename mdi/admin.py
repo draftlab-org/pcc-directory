@@ -3,7 +3,7 @@ from django.contrib.gis.admin import ModelAdmin, OSMGeoAdmin, TabularInline
 from accounts.models import SocialNetwork
 from .models import \
     Category, Challenge, LegalStatus, Organization, OrganizationSocialNetwork, Stage, Type, Tool, License, \
-    Pricing, Niche, Relationship, EntitiesEntities, Service
+    Pricing, Niche, Relationship, EntitiesEntities, Service, OrganizationAdminMember
 from django.db.models.functions import Lower
 
 
@@ -97,3 +97,33 @@ class LicenseAdmin(admin.ModelAdmin):
 @admin.register(Pricing)
 class PricingAdmin(admin.ModelAdmin):
     fields = ('name', )
+
+@admin.register(OrganizationAdminMember)
+class OrganizationAdminMemberAdmin(admin.ModelAdmin):
+    fields = ('organization', 'member', 'approved', )
+    list_display = ('organization', 'admin_member', 'admin_member_email', 'approved', 'created_at', 'updated_at', )
+    list_filter = ('approved', 'created_at', )
+    search_fields = ('organization__name', 'organization__description', \
+        'organization__email', 'member__username', 'member__first_name', \
+            'member__last_name', 'member__email', )
+    actions = ['make_approved', 'make_disapproved',]
+    
+    def admin_member(self, obj):
+        return obj.member.get_full_name()
+    admin_member.short_description = 'Member Name'
+    admin_member.empty_value_display = '---'
+    
+    def admin_member_email(self, obj):
+        return obj.member.email
+    admin_member_email.short_description = 'Member Email'
+    admin_member_email.empty_value_display = '---'
+    
+    def make_approved(self, request, queryset):
+        """Set request to approved."""
+        queryset.update(approved=True)
+    make_approved.short_description = 'Approve selected request'
+
+    def make_disapproved(self, request, queryset):
+        """Set request to disapproved."""
+        queryset.update(approved=False)
+    make_disapproved.short_description = 'Disapprove selected request'
