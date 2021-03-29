@@ -298,6 +298,22 @@ if (dateWrapper) {
   });
 });
 
+[...document.querySelectorAll('.leave-organization')].forEach((form) => {
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+  });
+  const btn = form.querySelector('[type="submit"]');
+  new Pinecone.Dialog(btn, {
+    title: 'Leave organization?',
+    question: 'Are you sure you want to leave this organization? All your information will be lost.',
+    confirm: 'Yes, leave',
+    dismiss: 'No, don&rsquo;t leave',
+    callback: function callback() {
+      form.submit();
+    }
+  });
+});
+
 [...document.querySelectorAll('[name="roles"]')].forEach((checkbox) => {
   checkbox.addEventListener('change', () => {
     const checkboxClass = `role-${event.target.value}`;

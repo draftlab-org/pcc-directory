@@ -33,11 +33,52 @@
           <a rel="external" href="{{ organization.url }}">{% trans 'Visit website' %}</a>
       </p>
       {% endif %}
+      {% if organization.admin_email != user.email %}
+      <div class="spacer"></div>
+      <a href="{% url 'organization-request-admin' organization.pk %}">{% trans 'Request to be an organization admin' %}</a>
+      {% endif %}
       {% if organization.admin_email == user.email %}
       <div class="align-right">
           <a href="{% url 'edit-basic-info' pk=organization.id %}">{% icon 'edit' %}{% trans 'Edit basic information' %}</a>
       </div>
       {% endif %}
+      <ul class="cards">
+      {% for request in organization_admins_members %}
+        <li class="">
+            <div class="card_request">
+                <header>
+                  <h3 class="card__title"> {{ request.member.get_full_name }}</h3>
+                </header>
+                <div class="card__aside">
+                    <div class="card__meta">
+                        <p>{% trans "Email" %}: {{ request.member.email }}</p>
+                    </div>
+                    <div class="card__meta">
+                        <p>{% trans "Sent" %}: {{ request.created_at }}</p>
+                    </div>
+                    <ul class="list-unstyled list-inline align-right buttons">
+                      <li>
+                        <form action="{% url 'organization-request-admin-opinion' organization.pk %}" method="post">
+                          {% csrf_token %}
+                          <input name="member_id" type="hidden" value="{{ request.member_id }}">
+                          <input name="approve" type="hidden" value="1">
+                          <button type="submit" class="button button--auto">{% trans "Approve" %}</button>
+                        </form>
+                      </li>
+                      <li>
+                        <form action="{% url 'organization-request-admin-opinion' organization.pk %}" method="post">
+                          {% csrf_token %}
+                          <input name="member_id" type="hidden" value="{{ request.member_id }}">
+                          <input name="approve" type="hidden" value="0">
+                          <button type="submit" class="button button--auto button-default">{% trans "Disapprove" %}</button>
+                        </form>
+                      </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+      {% endfor %}
+      </ul>
   </div>
   {% include 'maps/partials/messages.html' %}
   <div class="tabs">

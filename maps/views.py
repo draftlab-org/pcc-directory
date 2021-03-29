@@ -1,5 +1,5 @@
 from django.core.exceptions import PermissionDenied, ImproperlyConfigured
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, get_user
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -17,7 +17,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.forms import inlineformset_factory  # ModelMultipleChoiceField, SelectMultiple
 from accounts.models import UserSocialNetwork
 from mdi.models import Organization, SocialNetwork, OrganizationSocialNetwork, Relationship, EntitiesEntities, \
-    Tool, Niche, Type, Sector, Source
+    Tool, Niche, Type, Sector, Source, OrganizationAdminMember
 from formtools.wizard.views import SessionWizardView
 from .forms import GeolocationForm, IndividualProfileDeleteForm, IndividualRolesForm, IndividualBasicInfoForm, \
     IndividualMoreAboutYouForm, IndividualDetailedInfoForm, IndividualContactInfoForm, IndividualSocialNetworkFormSet, \
@@ -30,7 +30,12 @@ from django_countries import countries
 from django.contrib.gis.geos import Point
 import os
 import requests
+import logging
+from django.db.models import Q
+from django.utils.timezone import now
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class RedirectMixin:
     redirect_url = None
@@ -709,14 +714,86 @@ def organization_detail(request, organization_id):
         members.append(get_user_model().objects.get(id=relationship.from_ind.id))
     for relationship in founder_of_relationships:
         founders.append(get_user_model().objects.get(id=relationship.from_ind.id))
-
+    
+    
+    organization_admins_members = None
+    user = get_user(request)
+    if user.is_authenticated and (organization.admin_email == user.email or organization.organization_admins_members.filter(approved=True, member=user).exists()):
+        organization_admins_members = organization.organization_admins_members.filter(approved__isnull=True)
+    
     context = {
         'organization': organization,
         'members': members,
-        'founders': founders
+        'founders': founders,
+        'organization_admins_members': organization_admins_members,
     }
     return render(request, 'maps/organization_detail.html', context)
 
+@login_required
+def organization_request_admin(request, organization_id):
+    organization = get_object_or_404(Organization, pk=organization_id)
+    member = get_user(request)
+    redirect_to = reverse('organization-detail', kwargs={'organization_id': organization_id})
+
+    if organization.organization_admins_members.filter(member=member, approved__isnull=True).exists():
+        messages.info(request, _("You have already submitted a request to this organization, please wait for verification."))
+        return redirect(redirect_to)
+    
+    if organization.organization_admins_members.filter(member=member, approved=True).exists():
+        messages.info(request, _("You are already part of this organization!"))
+        return redirect(redirect_to)
+    
+    if organization.organization_admins_members.filter(member=member, approved=False).exists():
+        messages.info(request, _("You already have a denied request for that organization. Contact the administration."))
+        return redirect(redirect_to)
+    
+    try:
+        created = OrganizationAdminMember.objects.create(member=member, organization=organization)
+        if created:
+            messages.success(request, _("Request sent successfully!"))
+            return redirect(redirect_to)
+        else:
+            messages.error(request, _("We were unable to submit your request, please try again later."))
+    except Exception as err:
+        logger.error(err)
+        messages.error(request, _("We were unable to submit your request, please try again later."))
+    
+    return redirect(redirect_to)
+    
+
+
+@login_required
+def opinion_request_organization_admin(request, organization_id):
+    if request.method.upper() != 'POST':
+        messages.error(request, _("Method not allowed."))
+        return redirect(request.headers.get('Referer', '/'))
+    
+    organization = get_object_or_404(Organization, pk=organization_id)
+    member = get_object_or_404(get_user_model(), pk=request.POST.get('member_id'))
+    user = get_user(request)
+    redirect_to = reverse('organization-detail', kwargs={'organization_id': organization_id})
+    
+    if not user.is_authenticated or (organization.admin_email != user.email and not organization.organization_admins_members.filter(approved=True, member=user).exists()):
+        messages.warning(request, _("You are not allowed to perform this action!"))
+        return redirect(redirect_to)
+    
+    if not organization.organization_admins_members.filter(member=member, approved__isnull=True).exists():
+        messages.info(request, _("No requests were found for this member in this organization!"))
+        return redirect(redirect_to)
+    
+    try:
+        approved = bool(int(request.POST.get('approve')))
+        updated = OrganizationAdminMember.objects.filter(member=member, organization=organization, approved__isnull=True).update(approved=approved)
+        if updated:
+            messages.success(request, _("Opinion done successfully!"))
+            return redirect(redirect_to)
+        else:
+            messages.error(request, _("We were unable to perform your action, please try again later."))
+    except Exception as err:
+        logger.error(err)
+        messages.error(request, _("We were unable to perform your action, please try again later."))
+
+    
 
 # Individual
 def individual_detail(request, user_id):
@@ -755,6 +832,28 @@ class OrganizationDelete(DeleteView):
         messages.success(self.request, self.success_message % obj.__dict__)
         return super(OrganizationDelete, self).delete(request, *args, **kwargs)
 
+class OrganizationLeave(DeleteView):
+    model = Organization
+    slug_field = 'pk'
+    slug_url_kwarg = 'pk'
+    success_url = reverse_lazy('my-profiles')
+    success_message = "You have successfully left the %(name)s organization."
+    not_found_message = "You are not part of that organization %(name)s."
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        success_url = self.success_url
+        user = get_user(request)
+        member = obj.organization_admins_members.filter(member=user, approved=True, left_at__isnull=True).first()
+        
+        if not member:
+            messages.warning(request, _(self.not_found_message % obj.__dict__))
+            return HttpResponseRedirect(success_url)
+        
+        member.left_at = now()
+        member.save()
+        messages.success(self.request, self.success_message % obj.__dict__)
+        return HttpResponseRedirect(success_url)
 
 class SearchResultsView(ListView):
     model = Organization
@@ -785,7 +884,8 @@ class SearchResultsView(ListView):
 @login_required
 def my_profiles(request):
     user = request.user
-    user_orgs = Organization.objects.filter(admin_email=user.email)
+    user_orgs = Organization.objects.filter(Q(admin_email=user.email) | Q(organization_admins_members__member=user, \
+        organization_admins_members__left_at__isnull=True, organization_admins_members__approved=True))
 
     if request.method == 'POST':
         form = IndividualProfileDeleteForm(request.POST, instance=user)

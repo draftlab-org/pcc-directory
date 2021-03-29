@@ -4,7 +4,7 @@ from . import views
 from .views import INDIVIDUAL_FORMS, ORGANIZATION_FORMS, TOOL_FORMS, show_more_about_you_condition, show_scope_and_impact_condition,\
     IndividualProfileWizard, OrganizationProfileWizard, ToolWizard, OrganizationDelete, PrivacyPolicyView, TermsOfServiceView, AboutPageView,\
     InvididualOverviewUpdate, InvididualBasicInfoUpdate, OrganizationBasicInfoUpdate, OrganizationOverviewUpdate, OrganizationContactUpdate,\
-    SummaryPageView, ToolUpdate, SearchResultsView
+    SummaryPageView, ToolUpdate, SearchResultsView, OrganizationLeave
 from accounts.models import UserSocialNetwork
 from mdi.models import SocialNetwork
 
@@ -15,9 +15,12 @@ urlpatterns = [
     path('add/tool', ToolWizard.as_view(TOOL_FORMS), name='add-tool'),
     path('organizations/<int:organization_id>', views.organization_detail, name='organization-detail'),
     path('organizations/<int:pk>/delete', OrganizationDelete.as_view(), name='organization-delete'),
+    path('organizations/<int:pk>/leave', OrganizationLeave.as_view(), name='organization-leave'),
     path('organizations/<int:pk>/edit-basic-info', OrganizationBasicInfoUpdate.as_view(), name='edit-basic-info'),
     path('organizations/<int:pk>/edit-overview', OrganizationOverviewUpdate.as_view(), name='edit-overview'),
     path('organizations/<int:pk>/edit-contact', OrganizationContactUpdate.as_view(), name='edit-contact'),
+    path('organizations/<int:organization_id>/request-admin', views.organization_request_admin, name='organization-request-admin'),
+    path('organizations/<int:organization_id>/request-admin-opinion', views.opinion_request_organization_admin, name='organization-request-admin-opinion'),
     path('individuals/<int:user_id>', views.individual_detail, name='individual-detail'),
     path('individuals/<int:pk>/edit-basic-info', InvididualBasicInfoUpdate.as_view(), name='edit-my-basic-info'),
     path('individuals/<int:pk>/edit-overview', InvididualOverviewUpdate.as_view(), name='edit-my-overview'),
