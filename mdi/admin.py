@@ -129,12 +129,20 @@ class OrganizationAdminMemberAdmin(admin.ModelAdmin):
     
     def make_approved(self, request, queryset):
         """Set request to approved."""
-        queryset.update(approved=True, opinion_made_by_id=request.user.pk)
+        user_id = request.user.pk
+        for obj in queryset:
+            obj.approved = True
+            obj.opinion_made_by_id = user_id
+            obj.save()
     make_approved.short_description = 'Approve selected request'
 
     def make_disapproved(self, request, queryset):
         """Set request to disapproved."""
-        queryset.update(approved=False, opinion_made_by_id=request.user.pk)
+        user_id = request.user.pk
+        for obj in queryset:
+            obj.approved = False
+            obj.opinion_made_by_id = user_id
+            obj.save()
     make_disapproved.short_description = 'Disapprove selected request'
     
     def save_model(self, request, obj, form, change):
