@@ -1,0 +1,11 @@
+{% load i18n %}
+{% trans "Hello," %} {{ member.get_full_name }}
+
+{% blocktrans %}Your request has been sent successfully, wait for the opinion of the organization ({{ organization }}).{% endblocktrans %}
+
+
+Platform Cooperativism Consortium
+The New School
+79 Fifth Avenue, 1601
+New York, New York
+10003
