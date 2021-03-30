@@ -180,8 +180,8 @@ EMAIL_HOST = os.getenv('DJANGO_EMAIL_HOST', 'localhost')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 25))
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', None)
-EMAIL_USE_TLS = bool(strtobool(os.getenv('EMAIL_USE_TLS', False)))
-EMAIL_USE_SSL = bool(strtobool(os.getenv('EMAIL_USE_SSL', False)))
+EMAIL_USE_TLS = bool(strtobool(os.getenv('EMAIL_USE_TLS', 'False')))
+EMAIL_USE_SSL = bool(strtobool(os.getenv('EMAIL_USE_SSL', 'False')))
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@localhost')
 
 LOGIN_REDIRECT_URL = '/'
