@@ -37,7 +37,7 @@
       <div class="spacer"></div>
       <a href="{% url 'organization-request-admin' organization.pk %}">{% trans 'Request to be an organization admin' %}</a>
       {% endif %}
-      {% if organization.admin_email == user.email %}
+      {% if is_organization_admin_member %}
       <div class="align-right">
           <a href="{% url 'edit-basic-info' pk=organization.id %}">{% icon 'edit' %}{% trans 'Edit basic information' %}</a>
       </div>
@@ -311,7 +311,7 @@
   {% endif %}
   {% if organization.email or organization.city or organization.country %}
   <div id="contact" role="tabpanel" aria-labelledby="contact-btn">
-    {% if organization.admin_email == user.email %}
+    {% if is_organization_admin_member %}
     <div class="edit align-right">
         <a href="{% url 'edit-contact' pk=organization.id %}">{% icon 'edit' %}{% trans 'Edit contact information' %}</a>
     </div>

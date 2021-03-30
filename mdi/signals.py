@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.sites.models import Site
 from mdi.models import OrganizationAdminMember
 from rest_framework.reverse import reverse
+from django.contrib.auth import get_user_model
 
 
 def send_mail(template, subject, to, context):
@@ -21,13 +22,31 @@ def send_mail(template, subject, to, context):
 @receiver(pre_save, sender=OrganizationAdminMember)
 def send_org_admin_member_request(sender, instance, **kwargs):
     if not instance.id:
-        emaiL_template = 'email/organization_admin_member_request.txt'
-        subject = _('Your request has been sent successfully')
+        org = instance.organization
+        member = instance.member
+        # Member notify
+        member_emaiL_template = 'email/organization_admin_member_request.txt'
+        member_subject = _('Your request has been sent successfully')
         context = {
-            'member': instance.member,
-            'organization': instance.organization
+            'member': member,
+            'organization': org
         }
-        send_mail(emaiL_template, subject, instance.member.email, context)
+        send_mail(member_emaiL_template, member_subject, member.email, context)
+        # Admin notify
+        domain = Site.objects.first().domain
+        organization_url = '%s%s' % (domain, reverse('organization-detail', kwargs={'organization_id': org.pk}))
+        admin_emaiL_template = 'email/organization_admin_member_request_admin.txt'
+        admin_subject = _('Your request has been sent successfully')
+        admin_targets = set(org.organization_admins_members.filter(approved=True, left_at__isnull=True).values_list('member__email', flat=True))
+        if org.admin_email:
+            admin_targets.add(org.admin_email)
+        if not admin_targets:
+            admin_targets =  set(get_user_model().objects.filter(is_superuser=True, is_active=True).values_list('email', flat=True))
+        context.update({
+            'organization_url': organization_url,
+        })
+        send_mail(admin_emaiL_template, admin_subject, list(admin_targets), context)
+        
     
     db_instance = OrganizationAdminMember.objects.filter(pk=instance.pk).first()
     if db_instance and db_instance.approved != instance.approved and instance.approved:
