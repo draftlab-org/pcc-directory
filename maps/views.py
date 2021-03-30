@@ -720,7 +720,7 @@ def organization_detail(request, organization_id):
     organization_admins_members = None
     is_organization_admin_member = False
     user = get_user(request)
-    if user.is_authenticated and (organization.admin_email == user.email or organization.organization_admins_members.filter(approved=True, member=user).exists()):
+    if user.is_authenticated and (organization.admin_email == user.email or organization.organization_admins_members.filter(approved=True, member=user, left_at__isnull=True).exists()):
         is_organization_admin_member = True
         organization_admins_members = organization.organization_admins_members.filter(approved__isnull=True)
     
@@ -743,11 +743,11 @@ def organization_request_admin(request, organization_id):
         messages.info(request, _("You have already submitted a request to this organization, please wait for verification."))
         return redirect(redirect_to)
     
-    if organization.organization_admins_members.filter(member=member, approved=True).exists():
+    if organization.organization_admins_members.filter(member=member, approved=True, left_at__isnull=True).exists():
         messages.info(request, _("You are already part of this organization!"))
         return redirect(redirect_to)
     
-    if organization.organization_admins_members.filter(member=member, approved=False).exists():
+    if organization.organization_admins_members.filter(member=member, approved=False, left_at__isnull=True).exists():
         messages.info(request, _("You already have a denied request for that organization. Contact the administration."))
         return redirect(redirect_to)
     
@@ -787,15 +787,14 @@ def opinion_request_organization_admin(request, organization_id):
     
     try:
         approved = bool(int(request.POST.get('approve')))
-        updated = OrganizationAdminMember.objects.filter(member=member, organization=organization, approved__isnull=True).update(approved=approved)
-        if updated:
-            messages.success(request, _("Opinion done successfully!"))
-            return redirect(redirect_to)
-        else:
-            messages.error(request, _("We were unable to perform your action, please try again later."))
+        member_request = OrganizationAdminMember.objects.filter(member=member, organization=organization, approved__isnull=True).first()
+        member_request.approved = approved
+        member_request.save()
+        messages.success(request, _("Opinion done successfully!"))
     except Exception as err:
         logger.error(err)
         messages.error(request, _("We were unable to perform your action, please try again later."))
+    return redirect(redirect_to)
 
     
 
