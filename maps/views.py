@@ -512,7 +512,8 @@ class OrganizationOverviewUpdate(LoginRequiredMixin, UpdateView):
 
     def get_object(self, *args, **kwargs):
         org = super(OrganizationOverviewUpdate, self).get_object(*args, **kwargs)
-        if org.admin_email != self.request.user.email:
+        user = get_user(self.request)
+        if org.admin_email != user.email and not org.organization_admins_members.filter(approved=True, member=user, left_at__isnull=True).exists():
             raise PermissionDenied()  # TODO: Make this nicer
         return org
 
@@ -717,8 +718,10 @@ def organization_detail(request, organization_id):
     
     
     organization_admins_members = None
+    is_organization_admin_member = False
     user = get_user(request)
     if user.is_authenticated and (organization.admin_email == user.email or organization.organization_admins_members.filter(approved=True, member=user).exists()):
+        is_organization_admin_member = True
         organization_admins_members = organization.organization_admins_members.filter(approved__isnull=True)
     
     context = {
@@ -726,6 +729,7 @@ def organization_detail(request, organization_id):
         'members': members,
         'founders': founders,
         'organization_admins_members': organization_admins_members,
+        'is_organization_admin_member': is_organization_admin_member,
     }
     return render(request, 'maps/organization_detail.html', context)
 

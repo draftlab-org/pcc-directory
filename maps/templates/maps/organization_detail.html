@@ -183,7 +183,7 @@
       {% endif %}
     </div>
     <div class="panel__content">
-      {% if organization.admin_email == user.email %}
+      {% if is_organization_admin_member %}
       <div class="edit align-right">
           <a href="{% url 'edit-overview' pk=organization.id %}">{% icon 'edit' %}{% trans 'Edit overview' %}</a>
       </div>
