@@ -489,7 +489,8 @@ class OrganizationBasicInfoUpdate(LoginRequiredMixin, UpdateView):
 
     def get_object(self, *args, **kwargs):
         org = super(OrganizationBasicInfoUpdate, self).get_object(*args, **kwargs)
-        if org.admin_email != self.request.user.email:
+        user = get_user(self.request)
+        if org.admin_email != user.email and not org.organization_admins_members.filter(approved=True, member=user, left_at__isnull=True).exists():
             raise PermissionDenied()  # TODO: Make this nicer
         return org
 
@@ -563,7 +564,8 @@ class OrganizationContactUpdate(LoginRequiredMixin, UpdateView):
 
     def get_object(self, *args, **kwargs):
         org = super(OrganizationContactUpdate, self).get_object(*args, **kwargs)
-        if org.admin_email != self.request.user.email:
+        user = get_user(self.request)
+        if org.admin_email != user.email and not org.organization_admins_members.filter(approved=True, member=user, left_at__isnull=True).exists():
             raise PermissionDenied()  # TODO: Make this nicer
         return org
 
