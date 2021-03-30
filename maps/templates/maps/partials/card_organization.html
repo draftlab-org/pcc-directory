@@ -1,4 +1,4 @@
-{% load maps_extras %}
+{% load maps_extras i18n %}
 <li class="card__wrapper">
     <div class="card card--organization">
         <header>
@@ -57,15 +57,27 @@
         </div>
     </div>
     {% url 'my-profiles' as my_profiles_url %}
-    {% if request.get_full_path == my_profiles_url and organization.admin_email == user.email %}
-    <div class="align-left">
-        <form class="delete-organization" method="POST" action="{% url 'organization-delete' pk=organization.id %}">
-            {% csrf_token %}
-            <button class="button button--borderless button--destructive delete-profile" type="submit">
-                {% icon 'delete' %}
-                Delete <span class="screen-reader-text">organizational profile</span>
-            </button>
-        </form>
-    </div>
+    {% if request.get_full_path == my_profiles_url %}
+        {% if organization.admin_email == user.email %}
+            <div class="align-left">
+                <form class="delete-organization" method="POST" action="{% url 'organization-delete' pk=organization.id %}">
+                    {% csrf_token %}
+                    <button class="button button--borderless button--destructive delete-profile" type="submit">
+                        {% icon 'delete' %}
+                        Delete <span class="screen-reader-text">organizational profile</span>
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <div class="align-left">
+                <form class="leave-organization" method="POST" action="{% url 'organization-leave' pk=organization.id %}">
+                    {% csrf_token %}
+                    <button class="button button--borderless button--destructive delete-profile" type="submit">
+                        {% icon 'close' %}
+                        {% trans "Leave organization" %} <span class="screen-reader-text">organizational profile</span>
+                    </button>
+                </form>
+            </div>
+        {% endif %}
     {% endif %}
 </li>

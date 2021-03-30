@@ -3,8 +3,10 @@ from django.contrib.gis.admin import ModelAdmin, OSMGeoAdmin, TabularInline
 from accounts.models import SocialNetwork
 from .models import \
     Category, Challenge, LegalStatus, Organization, OrganizationSocialNetwork, Stage, Type, Tool, License, \
-    Pricing, Niche, Relationship, EntitiesEntities, Service
+    Pricing, Niche, Relationship, EntitiesEntities, Service, OrganizationAdminMember
 from django.db.models.functions import Lower
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 
 # Window dressing
@@ -97,3 +99,53 @@ class LicenseAdmin(admin.ModelAdmin):
 @admin.register(Pricing)
 class PricingAdmin(admin.ModelAdmin):
     fields = ('name', )
+
+@admin.register(OrganizationAdminMember)
+class OrganizationAdminMemberAdmin(admin.ModelAdmin):
+    fields = ('organization', 'member', 'approved', )
+    list_display = ('organization', 'get_admin_member', 'approved', 'get_opinion_made_by', \
+        'left_at', 'created_at', 'updated_at', )
+    list_filter = ('approved', 'created_at', 'left_at', )
+    search_fields = ('organization__name', 'organization__description', \
+        'organization__email', 'member__username', 'member__first_name', \
+            'member__last_name', 'member__email', )
+    actions = ['make_approved', 'make_disapproved',]
+    
+    def get_admin_member(self, obj):
+        if not obj.member:
+            return None
+        return mark_safe('<a href="%saccounts/user/%s/change/" target="_blank">%s</a>' % (reverse('admin:index'), obj.member.id, obj.member.get_full_name()))
+    get_admin_member.short_description = 'Member Name'
+    get_admin_member.empty_value_display = '-'
+    get_admin_member.admin_order_field = 'member__name'
+    
+    def get_opinion_made_by(self, obj):
+        if not obj.opinion_made_by:
+            return None
+        return mark_safe('<a href="%saccounts/user/%s/change/" target="_blank">%s</a>' % (reverse('admin:index'), obj.opinion_made_by.id, obj.opinion_made_by.get_full_name()))
+    get_opinion_made_by.short_description = 'Opinion made by'
+    get_opinion_made_by.empty_value_display = '-'
+    get_opinion_made_by.admin_order_field = 'opinion_made_by'
+    
+    def make_approved(self, request, queryset):
+        """Set request to approved."""
+        user_id = request.user.pk
+        for obj in queryset:
+            obj.approved = True
+            obj.opinion_made_by_id = user_id
+            obj.save()
+    make_approved.short_description = 'Approve selected request'
+
+    def make_disapproved(self, request, queryset):
+        """Set request to disapproved."""
+        user_id = request.user.pk
+        for obj in queryset:
+            obj.approved = False
+            obj.opinion_made_by_id = user_id
+            obj.save()
+    make_disapproved.short_description = 'Disapprove selected request'
+    
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'opinion_made_by', None) is None:
+            obj.opinion_made_by = request.user
+        obj.save()

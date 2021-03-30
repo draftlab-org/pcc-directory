@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import dj_database_url
 import os
 import dotenv
+from distutils.util import strtobool
 dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -176,7 +177,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 EMAIL_BACKEND = os.getenv('DJANGO_EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
 EMAIL_HOST = os.getenv('DJANGO_EMAIL_HOST', 'localhost')
-DEFAULT_FROM_EMAIL = os.getenv('DJANGO_DEFAULT_FROM_EMAIL', 'noreply@localhost')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 25))
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', None)
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', None)
+EMAIL_USE_TLS = bool(strtobool(os.getenv('EMAIL_USE_TLS', False)))
+EMAIL_USE_SSL = bool(strtobool(os.getenv('EMAIL_USE_SSL', False)))
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@localhost')
 
 LOGIN_REDIRECT_URL = '/'
 

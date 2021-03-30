@@ -1,5 +1,5 @@
 {% load account %}{% load i18n %}{% autoescape off %}
-{% blocktrans }
+{% blocktrans %}
 Hello!
 
 Someone (hopefully you) has entered your email address in order to create an account on the Platform Co-op Directory.
