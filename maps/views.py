@@ -791,6 +791,7 @@ def opinion_request_organization_admin(request, organization_id):
         approved = bool(int(request.POST.get('approve')))
         member_request = OrganizationAdminMember.objects.filter(member=member, organization=organization, approved__isnull=True).first()
         member_request.approved = approved
+        member_request.opinion_made_by = user
         member_request.save()
         messages.success(request, _("Opinion done successfully!"))
     except Exception as err:
