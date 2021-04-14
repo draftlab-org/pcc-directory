@@ -11,21 +11,21 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.db.models import Manager as GeoManager
 from allauth.account.signals import email_changed
-
+from django.utils.translation import gettext_lazy as _
 
 class Type(models.Model):
     name = models.CharField(blank=False, max_length=255, unique=True)
     icon = models.CharField(blank=True, max_length=32)
     description = models.CharField(blank=True, default='', max_length=255)
+    active = models.BooleanField(default=False, blank=True, null=True, help_text=_("Display type in the organization's creation form?"))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    
     class Meta:
         ordering = ['name']
 
     def __str__(self):
         return self.name
-
 
 class Category(models.Model):
     name = models.CharField(blank=False, max_length=255, unique=True)
