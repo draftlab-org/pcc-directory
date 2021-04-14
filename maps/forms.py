@@ -339,12 +339,7 @@ class IndividualOverviewUpdateForm(BaseModelForm):
 
 class OrganizationTypeForm(BaseForm):
     type = forms.ModelChoiceField(
-        Type.objects.filter(name__in=[
-            'Cooperative',
-            'Potential cooperative',
-            'Shared platform'
-            # 'Supporting organization' TODO: Add flow for these.
-        ]),
+        Type.objects.filter(active=True),
         empty_label=None,
         label=_('How would you describe your organization?'),
         required=True,
