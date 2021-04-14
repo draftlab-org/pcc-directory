@@ -38,7 +38,7 @@ class ServiceAdmin(ModelAdmin):
 
 @admin.register(Type)
 class TypeAdmin(ModelAdmin):
-    list_display = ('name', 'description')
+    list_display = ('name', 'description', 'active')
 
 
 class OrganizationSocialNetworkInline(TabularInline):
