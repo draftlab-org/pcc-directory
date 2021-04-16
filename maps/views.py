@@ -230,9 +230,15 @@ class IndividualProfileWizard(LoginRequiredMixin, IndividualProfileRedirectMixin
                         'display_projects': True
                     })
                 if r.name == 'Community Builder':
-                    context.update({'display_community_skills': True})
+                    context.update({
+                        'display_community_skills': True,
+                         'display_coops_worked_with': True
+                    })
                 if r.name in ['Funder', 'Policymaker']:
-                    context.update({'display_affiliation': True})
+                    context.update({
+                        'display_affiliation': True,
+                        'display_coops_worked_with': True
+                    })
         return context
 
     # Attempt to solve SocialNetwork problem on profile pages.

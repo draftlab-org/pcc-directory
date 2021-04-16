@@ -137,7 +137,7 @@ class IndividualMoreAboutYouForm(BaseModelForm):
 
     worked_with = forms.ModelMultipleChoiceField(
         queryset=Organization.objects.all(),
-        label=_('Cooperative(s) you have worked with'),
+        label=_('Organization(s) you are related to'),
         required=False,
         widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'})
     )
@@ -158,7 +158,7 @@ class IndividualMoreAboutYouForm(BaseModelForm):
             'services': _('Services you provide'),
             'community_skills': _('What community building skills do you have to offer?'),
             'field_of_study': _('What is your field of research?'),
-            'affiliation': _('Are you affiliated with an organization or institution?'),
+            'affiliation': _('Are there other organizations or institutions that you are a part of?'),
             'affiliation_url': _('What is the website address of your affiliated organization or institution?'),
         }
         widgets = {
@@ -294,7 +294,7 @@ class IndividualOverviewUpdateForm(BaseModelForm):
 
     worked_with = forms.ModelMultipleChoiceField(
         queryset=Organization.objects.all(),
-        label=_('Cooperative(s) you have worked with'),
+        label=_('Organization(s) you are related to'),
         required=False,
         widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
         help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
@@ -320,7 +320,7 @@ class IndividualOverviewUpdateForm(BaseModelForm):
             'services': _('Services you provide'),
             'community_skills': _('What community building skills do you have to offer?'),
             'field_of_study': _('What is your field of research?'),
-            'affiliation': _('Are you affiliated with an organization or institution?'),
+            'affiliation': _('Are there other organizations or institutions that you are a part of?'),
             'affiliation_url': _('What is the website address of your affiliated organization or institution?'),
             'bio': _('Bio'),
             'projects': _('Projects'),
