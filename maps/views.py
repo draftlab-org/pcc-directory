@@ -25,7 +25,8 @@ from .forms import GeolocationForm, IndividualProfileDeleteForm, IndividualRoles
     OrganizationTypeForm, OrganizationBasicInfoForm, OrganizationContactInfoForm, OrganizationDetailedInfoForm, \
     OrganizationScopeAndImpactForm, OrganizationSocialNetworkFormSet, OrganizationBasicInfoUpdateForm, \
     OrganizationOverviewUpdateForm, OrganizationContactUpdateForm, OrganizationEditSocialNetworkFormSet, \
-    ToolBasicInfoForm, ToolDetailedInfoForm, ToolUpdateForm
+    ToolBasicInfoForm, ToolDetailedInfoForm, ToolUpdateForm, OrganizationChallengesForm, OrganizationToolForm, \
+    OrganizationSourceCodeForm
 from django_countries import countries
 from django.contrib.gis.geos import Point
 import os
@@ -33,6 +34,7 @@ import requests
 import logging
 from django.db.models import Q
 from django.utils.timezone import now
+from django.db.models.query import QuerySet
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -104,8 +106,8 @@ def contact_info_to_lng_lat(contact_info):
     r = requests.get(url=URL, params=PARAMS)
     data = r.json()
     return {
-        'lng': data['items'][0]['position']['lng'],
-        'lat': data['items'][0]['position']['lat'],
+        'lng': 0,
+        'lat': 0,
     }
 
 
@@ -153,6 +155,9 @@ ORGANIZATION_FORMS = [
     ('detailed_info', OrganizationDetailedInfoForm),
     ('scope_and_impact', OrganizationScopeAndImpactForm),
     ('social_networks', OrganizationSocialNetworkFormSet),
+    ('challenges', OrganizationChallengesForm),
+    ('tools', OrganizationToolForm),
+    ('source_code', OrganizationSourceCodeForm)
 ]
 
 ORGANIZATION_TEMPLATES = {
@@ -162,7 +167,10 @@ ORGANIZATION_TEMPLATES = {
     'geolocation': 'maps/profiles/organization/geolocation.html',
     'detailed_info': 'maps/profiles/organization/detailed_info.html',
     'scope_and_impact': 'maps/profiles/organization/scope_and_impact.html',
-    'social_networks': 'maps/profiles/organization/social_networks.html'
+    'social_networks': 'maps/profiles/organization/social_networks.html',
+    'challenges': 'maps/profiles/organization/challenges.html',
+    'tools': 'maps/profiles/organization/tools.html',
+    'source_code': 'maps/profiles/organization/source_code.html'
 }
 
 TOOL_FORMS = [
@@ -460,23 +468,36 @@ class OrganizationProfileWizard(LoginRequiredMixin, SessionWizardView):
         form_dict = self.get_all_cleaned_data()
         form_dict['geom'] = Point(float(form_dict['lng']), float(form_dict['lat']))
         org = Organization(admin_email=user.email)
+
+        check_relationships = (
+            'languages', 'categories', 'sectors', 
+            'formset-social_networks', 'legal_status', 
+            'challenges', 'tools', 'source_code',) 
+        
         for k, v in form_dict.items():
-            if k not in ['languages', 'categories', 'sectors', 'formset-social_networks']:
+            if k not in check_relationships:
                 setattr(org, k, v)
         setattr(org, 'type_id', form_dict['type'].id)
-        organic = Source.objects.get(name='Organic')
-        org.source = organic
+
+        source = form_dict.get('source_code', None)
+        org.source = source
         org.save()
         org.languages.set(form_dict['languages'])
+        
         if form_dict['type'].name == 'Cooperative':
             # We don't need to set these for non-coops at present.
             org.categories.set(form_dict['categories'])
         if 'sectors' in form_dict:
             org.sectors.set(form_dict['sectors'])
+        if 'legal_status' in form_dict:
+            org.legal_status.set(form_dict['legal_status'])
+        if 'challenges' in form_dict:
+            org.challenges.set(form_dict['challenges'])
+        if 'tools' in form_dict:
+            org.tools.set(form_dict['tools'])
         for sn in form_dict['formset-social_networks']:
             if sn['identifier'] != '':
                 OrganizationSocialNetwork.objects.create(organization=org, socialnetwork=sn['socialnetwork'], identifier=sn['identifier'])
-
         return redirect('organization-detail', organization_id=org.id)
 
 
