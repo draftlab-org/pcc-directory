@@ -3,7 +3,7 @@ from django.contrib.gis.admin import ModelAdmin, OSMGeoAdmin, TabularInline
 from accounts.models import SocialNetwork
 from .models import \
     Category, Challenge, LegalStatus, Organization, OrganizationSocialNetwork, Stage, Type, Tool, License, \
-    Pricing, Niche, Relationship, EntitiesEntities, Service, OrganizationAdminMember
+    Pricing, Niche, Relationship, EntitiesEntities, Service, OrganizationAdminMember, Source
 from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -149,3 +149,8 @@ class OrganizationAdminMemberAdmin(admin.ModelAdmin):
         if getattr(obj, 'opinion_made_by', None) is None:
             obj.opinion_made_by = request.user
         obj.save()
+
+
+@admin.register(Source)
+class SourceAdmin(ModelAdmin):
+    list_display = ('name', 'description', 'url',)
