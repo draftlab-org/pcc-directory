@@ -106,8 +106,8 @@ def contact_info_to_lng_lat(contact_info):
     r = requests.get(url=URL, params=PARAMS)
     data = r.json()
     return {
-        'lng': 0,
-        'lat': 0,
+        'lng': data['items'][0]['position']['lng'],
+        'lat': data['items'][0]['position']['lat']
     }
 
 
