@@ -29,7 +29,7 @@
             {% if wizard.form.sectors.help_text %}
             <span class="helptext">{{ wizard.form.sectors.help_text | safe }}</span>
             {% endif %}
-            {% if is_coop %}
+            {% if is_coop or is_potential_coop or is_shared_platform %}
             {{ wizard.form.categories.label_tag }}
             {{ wizard.form.categories }}
             {% if wizard.form.categories.help_text %}
@@ -41,7 +41,7 @@
             {% if wizard.form.num_workers.help_text %}
             <span class="helptext">{{ wizard.form.num_workers.help_text | safe }}</span>
             {% endif %}
-            {% if is_coop %}
+            {% if is_coop or is_potential_coop or is_shared_platform %}
                 {{ wizard.form.num_members.label_tag }}
                 {{ wizard.form.num_members }}
                 {% if wizard.form.num_members.help_text %}
@@ -58,6 +58,13 @@
             {% if wizard.form.worker_distribution.help_text %}
             <span class="helptext">{{ wizard.form.worker_distribution.help_text | safe }}</span>
             {% endif %}
+
+            {{ wizard.form.legal_status.label_tag }}
+            {{ wizard.form.legal_status }}
+            {% if wizard.form.legal_status.help_text %}
+            <span class="helptext">{{ wizard.form.legal_status.help_text | safe }}</span>
+            {% endif %}
+        
         {% endif %}
         {% include 'maps/profiles/footer.html' %}
         </div>

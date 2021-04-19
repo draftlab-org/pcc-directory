@@ -10,7 +10,7 @@ from django.utils.text import slugify
 from django.template.defaultfilters import safe
 from django_countries.fields import CountryField
 from accounts.models import Role, SocialNetwork, UserSocialNetwork
-from mdi.models import Organization, Category, Language, OrganizationSocialNetwork, Stage, Tool, Type, Pricing, License, LegalStatus, Challenge
+from mdi.models import Organization, Category, Language, OrganizationSocialNetwork, Stage, Tool, Type, Pricing, License, LegalStatus, Challenge, Source
 
 
 class BaseForm(forms.Form):
@@ -541,6 +541,14 @@ class OrganizationDetailedInfoForm(BaseModelForm):
         widget=RadioSelect(attrs={'class': 'input-group radio'})
     )
 
+    legal_status = forms.ModelMultipleChoiceField(
+        queryset=LegalStatus.objects.filter(order__lt=9999),
+        required=False,
+        label=_('Legal status'),
+        help_text=_('Choose all that apply.'),
+        widget=CheckboxSelectMultiple(attrs={'class': 'input-group radio'})
+    )
+
     def __init__(self, *args, **kwargs):
         self.type = kwargs['initial']['type']
         super(OrganizationDetailedInfoForm, self).__init__(*args, **kwargs)
@@ -559,7 +567,8 @@ class OrganizationDetailedInfoForm(BaseModelForm):
             'num_workers',
             'num_members',
             'stage',
-            'worker_distribution'
+            'worker_distribution',
+            'legal_status'
         ]
         help_texts = {
             'sectors': _('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.'),
@@ -1025,3 +1034,42 @@ class ToolUpdateForm(BaseModelForm):
             'license': Select(attrs={'id': 'id_detailed_info-license'}),
             'coop_made': RadioSelect(attrs={'class': 'input-group radio'})
         }
+
+
+class OrganizationChallengesForm(BaseModelForm):
+    challenges = forms.ModelMultipleChoiceField(
+        queryset=Challenge.objects.filter(order__lt=9999),
+        required=False,
+        label=_('Challenges'),
+        help_text=_('Choose all that apply.'),
+        widget=CheckboxSelectMultiple(attrs={'class': 'input-group checkbox'})
+    )
+    class Meta:
+        model = Challenge
+        fields = ['challenges']
+
+
+class OrganizationToolForm(BaseModelForm):
+    tools = forms.ModelMultipleChoiceField(
+        queryset=Tool.objects.all(),
+        required=False,
+        label=_('What is this tool used for?'),
+        help_text=_('Choose all that apply.'),
+        widget=CheckboxSelectMultiple(attrs={'class': 'input-group checkbox'})
+    )
+    class Meta:
+        model = Tool
+        fields = ['tools']
+        
+
+class OrganizationSourceCodeForm(BaseModelForm):
+    source_code = forms.ModelChoiceField(
+        queryset=Source.objects.order_by('name'),
+        required=False,
+        label=_("Source Code"),
+        help_text=_('Choose that apply.'),
+        widget=RadioSelect(attrs={'class': 'input-group radio'})
+    )
+    class Meta:
+        model = Source
+        fields = ['source_code']
