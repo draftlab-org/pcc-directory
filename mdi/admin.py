@@ -38,7 +38,26 @@ class ServiceAdmin(ModelAdmin):
 
 @admin.register(Type)
 class TypeAdmin(ModelAdmin):
-    list_display = ('name', 'description', 'active')
+    list_display = ('name', 'description', 'active',)
+    actions = ['make_actived', 'make_deactivate']
+
+    def make_actived(self, request, queryset):
+        """Set types to actived."""
+        user_id = request.user.pk
+        for obj in queryset:
+            obj.active = True
+            obj.opinion_made_by_id = user_id
+            obj.save()
+    make_actived.short_description = 'Active selected types'
+
+    def make_deactivate(self, request, queryset):
+        """Set types to deactivated."""
+        user_id = request.user.pk
+        for obj in queryset:
+            obj.active = False
+            obj.opinion_made_by_id = user_id
+            obj.save()
+    make_deactivate.short_description = 'Deactivated selected types'
 
 
 class OrganizationSocialNetworkInline(TabularInline):
