@@ -48,7 +48,7 @@ class TypeAdmin(ModelAdmin):
             obj.active = True
             obj.opinion_made_by_id = user_id
             obj.save()
-    make_actived.short_description = 'Active selected types'
+    make_actived.short_description = 'Enable selected types'
 
     def make_deactivate(self, request, queryset):
         """Set types to deactivated."""
@@ -57,7 +57,7 @@ class TypeAdmin(ModelAdmin):
             obj.active = False
             obj.opinion_made_by_id = user_id
             obj.save()
-    make_deactivate.short_description = 'Deactivated selected types'
+    make_deactivate.short_description = 'Disable selected types'
 
 
 class OrganizationSocialNetworkInline(TabularInline):
