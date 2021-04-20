@@ -184,14 +184,6 @@ TOOL_TEMPLATES = {
 }
 
 
-def show_more_about_you_condition(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step('roles') or {'roles': []}
-    if (len(cleaned_data['roles']) == 1 and cleaned_data['roles'][0].name == 'Other'):
-        return False
-
-    return True
-
-
 def show_scope_and_impact_condition(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step('org_type') or {'type': False}
     if (cleaned_data['type'] and cleaned_data['type'].name == 'Cooperative'):
@@ -235,7 +227,8 @@ class IndividualProfileWizard(LoginRequiredMixin, IndividualProfileRedirectMixin
                     context.update({
                         'display_field_of_study': True,
                         'display_affiliation': True,
-                        'display_projects': True
+                        'display_projects': True,
+                        'display_coops_worked_with': True
                     })
                 if r.name == 'Community Builder':
                     context.update({
@@ -245,6 +238,10 @@ class IndividualProfileWizard(LoginRequiredMixin, IndividualProfileRedirectMixin
                 if r.name in ['Funder', 'Policymaker']:
                     context.update({
                         'display_affiliation': True,
+                        'display_coops_worked_with': True
+                    })
+                if r.name == 'Other':
+                    context.update({
                         'display_coops_worked_with': True
                     })
         return context
