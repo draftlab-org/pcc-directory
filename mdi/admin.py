@@ -39,25 +39,25 @@ class ServiceAdmin(ModelAdmin):
 @admin.register(Type)
 class TypeAdmin(ModelAdmin):
     list_display = ('name', 'description', 'active',)
-    actions = ['make_approved', 'make_disapproved']
+    actions = ['make_actived', 'make_deactivate']
 
-    def make_approved(self, request, queryset):
-        """Set request to approved."""
+    def make_actived(self, request, queryset):
+        """Set request to actived."""
         user_id = request.user.pk
         for obj in queryset:
             obj.active = True
             obj.opinion_made_by_id = user_id
             obj.save()
-    make_approved.short_description = 'Approve selected request'
+    make_actived.short_description = 'Actived selected request'
 
-    def make_disapproved(self, request, queryset):
-        """Set request to disapproved."""
+    def make_deactivate(self, request, queryset):
+        """Set request to deactivate."""
         user_id = request.user.pk
         for obj in queryset:
             obj.active = False
             obj.opinion_made_by_id = user_id
             obj.save()
-    make_disapproved.short_description = 'Disapprove selected request'
+    make_deactivate.short_description = 'Deactivated selected request'
 
 
 class OrganizationSocialNetworkInline(TabularInline):
