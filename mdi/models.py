@@ -267,7 +267,7 @@ class Organization(models.Model):
         through='EntitiesEntities',
         through_fields=['from_org', 'to_ind']
     )
-    related_organizations = models.ManyToManyField('self', through='EntitiesEntities')
+    related_organizations = models.ManyToManyField('self', through='EntitiesEntities', symmetrical=False)
     geo_scope = models.CharField(blank=True, max_length=16,
                                  choices=[('Local', 'Local'), ('Regional', 'Regional'), ('National', 'National'), ('International', 'International')],
                                  verbose_name='Geographic scope', )
