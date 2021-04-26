@@ -33,7 +33,7 @@
           <a rel="external" href="{{ organization.url }}">{% trans 'Visit website' %}</a>
       </p>
       {% endif %}
-      {% if organization.admin_email != user.email %}
+      {% if not is_organization_admin_member %}
       <div class="spacer"></div>
       <a href="{% url 'organization-request-admin' organization.pk %}">{% trans 'Request to be an organization admin' %}</a>
       {% endif %}

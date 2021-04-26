@@ -10,7 +10,7 @@ from django.utils.text import slugify
 from django.template.defaultfilters import safe
 from django_countries.fields import CountryField
 from accounts.models import Role, SocialNetwork, UserSocialNetwork
-from mdi.models import Organization, Category, Language, OrganizationSocialNetwork, Stage, Tool, Type, Pricing, License, LegalStatus, Challenge, Source
+from mdi.models import Organization, Category, Language, OrganizationSocialNetwork, Stage, Tool, Type, Pricing, License, LegalStatus, Challenge
 
 
 class BaseForm(forms.Form):
@@ -125,23 +125,32 @@ class IndividualMoreAboutYouForm(BaseModelForm):
         queryset=Organization.objects.all(),
         label=_('Cooperative(s) you are a currently a member of'),
         required=False,
-        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'})
+        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
+        help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
     )
 
     founder_of = forms.ModelMultipleChoiceField(
         queryset=Organization.objects.all(),
         label=_('Cooperative(s) you are a founder of'),
         required=False,
-        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'})
+        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
+        help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
     )
 
     worked_with = forms.ModelMultipleChoiceField(
         queryset=Organization.objects.all(),
         label=_('Organization(s) you are related to'),
         required=False,
-        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'})
+        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
+        help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
     )
-
+    organization_related = forms.ModelMultipleChoiceField(
+        queryset=Organization.objects.all(),
+        label=_('Organization(s) you are related to'),
+        required=False,
+        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
+        help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
+    )
     class Meta:
         model = get_user_model()
         fields = [
@@ -165,7 +174,8 @@ class IndividualMoreAboutYouForm(BaseModelForm):
             'services': SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
         }
         help_texts = {
-            'community_skills': _('Provide a short description.')
+            'community_skills': _('Provide a short description.'),
+            'services': _('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
         }
 
 
@@ -510,7 +520,7 @@ class OrganizationDetailedInfoForm(BaseModelForm):
     )
 
     num_workers = IntegerField(
-        required=True,
+        required=False,
         label=_('Number of workers'),
         help_text=_('Please provide your best estimate.')
     )
@@ -1053,23 +1063,13 @@ class OrganizationToolForm(BaseModelForm):
     tools = forms.ModelMultipleChoiceField(
         queryset=Tool.objects.all(),
         required=False,
-        label=_('What is this tool used for?'),
-        help_text=_('Choose all that apply.'),
+        label=_('Which of these tools do you use?'),
+        help_text=_("""
+            If you want to add more tools, you’ll need to go to 
+            <a href="https://directory.platform.coop/add/tool"> 
+            </a>"""),
         widget=CheckboxSelectMultiple(attrs={'class': 'input-group checkbox'})
     )
     class Meta:
         model = Tool
         fields = ['tools']
-        
-
-class OrganizationSourceCodeForm(BaseModelForm):
-    source_code = forms.ModelChoiceField(
-        queryset=Source.objects.order_by('name'),
-        required=False,
-        label=_("Source Code"),
-        help_text=_('Choose that apply.'),
-        widget=RadioSelect(attrs={'class': 'input-group radio'})
-    )
-    class Meta:
-        model = Source
-        fields = ['source_code']

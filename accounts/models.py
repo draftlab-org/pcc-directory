@@ -89,7 +89,7 @@ class User(AbstractUser):
     url = models.URLField(blank=True, default='', max_length=255)
     geom = models.PointField(blank=True, null=True)
     roles = models.ManyToManyField(Role, blank=True, )
-    related_individuals = models.ManyToManyField('self', through='mdi.EntitiesEntities')
+    related_individuals = models.ManyToManyField('self', through='mdi.EntitiesEntities', symmetrical=False)
     related_organizations = models.ManyToManyField(
         'mdi.Organization',
         through='mdi.EntitiesEntities',
