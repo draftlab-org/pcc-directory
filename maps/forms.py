@@ -125,23 +125,32 @@ class IndividualMoreAboutYouForm(BaseModelForm):
         queryset=Organization.objects.all(),
         label=_('Cooperative(s) you are a currently a member of'),
         required=False,
-        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'})
+        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
+        help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
     )
 
     founder_of = forms.ModelMultipleChoiceField(
         queryset=Organization.objects.all(),
         label=_('Cooperative(s) you are a founder of'),
         required=False,
-        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'})
+        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
+        help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
     )
 
     worked_with = forms.ModelMultipleChoiceField(
         queryset=Organization.objects.all(),
         label=_('Cooperative(s) you have worked with'),
         required=False,
-        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'})
+        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
+        help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
     )
-
+    organization_related = forms.ModelMultipleChoiceField(
+        queryset=Organization.objects.all(),
+        label=_('Organization(s) you are related to'),
+        required=False,
+        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
+        help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
+    )
     class Meta:
         model = get_user_model()
         fields = [
@@ -165,7 +174,8 @@ class IndividualMoreAboutYouForm(BaseModelForm):
             'services': SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
         }
         help_texts = {
-            'community_skills': _('Provide a short description.')
+            'community_skills': _('Provide a short description.'),
+            'services': _('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
         }
 
 
@@ -510,7 +520,7 @@ class OrganizationDetailedInfoForm(BaseModelForm):
     )
 
     num_workers = IntegerField(
-        required=True,
+        required=False,
         label=_('Number of workers'),
         help_text=_('Please provide your best estimate.')
     )
@@ -1054,7 +1064,10 @@ class OrganizationToolForm(BaseModelForm):
         queryset=Tool.objects.all(),
         required=False,
         label=_('Which of these tools do you use?'),
-        help_text=_('Choose all that apply.'),
+        help_text=_("""
+            If you want to add more tools, you’ll need to go to 
+            <a href="https://directory.platform.coop/add/tool"> 
+            </a>"""),
         widget=CheckboxSelectMultiple(attrs={'class': 'input-group checkbox'})
     )
     class Meta:
