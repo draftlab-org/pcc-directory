@@ -25,8 +25,7 @@ from .forms import GeolocationForm, IndividualProfileDeleteForm, IndividualRoles
     OrganizationTypeForm, OrganizationBasicInfoForm, OrganizationContactInfoForm, OrganizationDetailedInfoForm, \
     OrganizationScopeAndImpactForm, OrganizationSocialNetworkFormSet, OrganizationBasicInfoUpdateForm, \
     OrganizationOverviewUpdateForm, OrganizationContactUpdateForm, OrganizationEditSocialNetworkFormSet, \
-    ToolBasicInfoForm, ToolDetailedInfoForm, ToolUpdateForm, OrganizationChallengesForm, OrganizationToolForm, \
-    OrganizationSourceCodeForm
+    ToolBasicInfoForm, ToolDetailedInfoForm, ToolUpdateForm, OrganizationChallengesForm, OrganizationToolForm
 from django_countries import countries
 from django.contrib.gis.geos import Point
 import os
@@ -156,8 +155,7 @@ ORGANIZATION_FORMS = [
     ('scope_and_impact', OrganizationScopeAndImpactForm),
     ('social_networks', OrganizationSocialNetworkFormSet),
     ('challenges', OrganizationChallengesForm),
-    ('tools', OrganizationToolForm),
-    ('source_code', OrganizationSourceCodeForm)
+    ('tools', OrganizationToolForm)
 ]
 
 ORGANIZATION_TEMPLATES = {
@@ -169,8 +167,7 @@ ORGANIZATION_TEMPLATES = {
     'scope_and_impact': 'maps/profiles/organization/scope_and_impact.html',
     'social_networks': 'maps/profiles/organization/social_networks.html',
     'challenges': 'maps/profiles/organization/challenges.html',
-    'tools': 'maps/profiles/organization/tools.html',
-    'source_code': 'maps/profiles/organization/source_code.html'
+    'tools': 'maps/profiles/organization/tools.html'
 }
 
 TOOL_FORMS = [

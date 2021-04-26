@@ -10,7 +10,7 @@ from django.utils.text import slugify
 from django.template.defaultfilters import safe
 from django_countries.fields import CountryField
 from accounts.models import Role, SocialNetwork, UserSocialNetwork
-from mdi.models import Organization, Category, Language, OrganizationSocialNetwork, Stage, Tool, Type, Pricing, License, LegalStatus, Challenge, Source
+from mdi.models import Organization, Category, Language, OrganizationSocialNetwork, Stage, Tool, Type, Pricing, License, LegalStatus, Challenge
 
 
 class BaseForm(forms.Form):
@@ -1060,16 +1060,3 @@ class OrganizationToolForm(BaseModelForm):
     class Meta:
         model = Tool
         fields = ['tools']
-        
-
-class OrganizationSourceCodeForm(BaseModelForm):
-    source_code = forms.ModelChoiceField(
-        queryset=Source.objects.order_by('name'),
-        required=False,
-        label=_("Source Code"),
-        help_text=_('Choose that apply.'),
-        widget=RadioSelect(attrs={'class': 'input-group radio'})
-    )
-    class Meta:
-        model = Source
-        fields = ['source_code']
