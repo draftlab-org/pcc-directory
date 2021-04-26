@@ -53,7 +53,7 @@
                 {% endif %}
             {% endif %}
             {% if display_organization_related %}
-                {{ wizard.form.organization_related.label }}
+                {{ wizard.form.organization_related.label_tag }}
                 {{ wizard.form.organization_related }}
                 {% if wizard.form.organization_related.help_text %}
                 <span class="helptext"> {{ wizard.form.organization_related.help_text | safe }} </span>

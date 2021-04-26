@@ -238,6 +238,8 @@ class IndividualProfileWizard(LoginRequiredMixin, IndividualProfileRedirectMixin
                     context.update({'display_community_skills': True})
                 if r.name in ['Funder', 'Policymaker']:
                     context.update({'display_affiliation': True})
+                if r.name is not ['Coop Member', 'Coop Founder']:
+                    context.update({'display_organization_related': True})
         return context
 
     # Attempt to solve SocialNetwork problem on profile pages.
