@@ -1053,7 +1053,7 @@ class OrganizationToolForm(BaseModelForm):
     tools = forms.ModelMultipleChoiceField(
         queryset=Tool.objects.all(),
         required=False,
-        label=_('What is this tool used for?'),
+        label=_('Which of these tools do you use?'),
         help_text=_('Choose all that apply.'),
         widget=CheckboxSelectMultiple(attrs={'class': 'input-group checkbox'})
     )
