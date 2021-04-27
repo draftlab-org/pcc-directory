@@ -144,13 +144,6 @@ class IndividualMoreAboutYouForm(BaseModelForm):
         widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
         help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
     )
-    organization_related = forms.ModelMultipleChoiceField(
-        queryset=Organization.objects.all(),
-        label=_('Organization(s) you are related to'),
-        required=False,
-        widget=SelectMultiple(attrs={'size': 4, 'class': 'multiple'}),
-        help_text=_('Hold down the <kbd>ctrl</kbd> (Windows) or <kbd>command</kbd> (macOS) key to select multiple options.')
-    )
     class Meta:
         model = get_user_model()
         fields = [
