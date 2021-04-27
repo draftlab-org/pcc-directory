@@ -1058,8 +1058,8 @@ class OrganizationToolForm(BaseModelForm):
         required=False,
         label=_('Which of these tools do you use?'),
         help_text=_("""
-            If you want to add more tools, you’ll need to go to 
-            <a href="https://directory.platform.coop/add/tool"> 
+            Choose all that apply. If you want to add more tools, you’ll need to go to 
+            <a href="https://directory.platform.coop/add/tool" target="_blank"> 
             </a>"""),
         widget=CheckboxSelectMultiple(attrs={'class': 'input-group checkbox'})
     )
