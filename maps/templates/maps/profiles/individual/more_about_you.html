@@ -37,14 +37,7 @@
                 {% if wizard.form.founder_of.help_text %}
                 <span class="helptext">{{ wizard.form.founder_of.help_text | safe }}</span>
                 {% endif %}
-            {% endif %}
-            {% if display_coops_worked_with %}
-                {{ wizard.form.worked_with.label_tag }}
-                {{ wizard.form.worked_with }}
-                {% if wizard.form.worked_with.help_text %}
-                <span class="helptext">{{ wizard.form.worked_with.help_text | safe }}</span>
-                {% endif %}
-            {% endif %}
+            {% endif %}            
             {% if display_services %}
                 {{ wizard.form.services.label_tag }}
                 {{ wizard.form.services }}
@@ -52,11 +45,11 @@
                 <span class="helptext">{{ wizard.form.services.help_text | safe }}</span>
                 {% endif %}
             {% endif %}
-            {% if display_organization_related %}
-                {{ wizard.form.organization_related.label_tag }}
-                {{ wizard.form.organization_related }}
-                {% if wizard.form.organization_related.help_text %}
-                <span class="helptext"> {{ wizard.form.organization_related.help_text | safe }} </span>
+            {% if display_worked_with %}
+                {{ wizard.form.worked_with.label_tag }}
+                {{ wizard.form.worked_with }}
+                {% if wizard.form.worked_with.help_text %}
+                <span class="helptext"> {{ wizard.form.worked_with.help_text | safe }} </span>
                 {% endif %}
             {% endif %}
             {% if display_community_skills %}

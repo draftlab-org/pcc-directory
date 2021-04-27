@@ -38,7 +38,7 @@ def send_org_admin_member_request(sender, instance, **kwargs):
         admin_emaiL_template = 'email/organization_admin_member_request_admin.txt'
         admin_subject = _('Your request has been sent successfully')
         admin_targets = set(org.organization_admins_members.filter(approved=True, left_at__isnull=True).values_list('member__email', flat=True))
-        admin_targets.union(set(get_user_model().objects.filter(is_superuser=True, is_active=True).values_list('email', flat=True)))
+        admin_targets = admin_targets.union(set(get_user_model().objects.filter(is_superuser=True, is_active=True).values_list('email', flat=True)))
         if org.admin_email:
             admin_targets.add(org.admin_email)
        
