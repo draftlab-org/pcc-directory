@@ -1,7 +1,7 @@
 {% load i18n %}
 {% trans "Hello," %} {{ member.get_full_name }}
 
-{% blocktrans %}You received a request to be admin of your organization, wait for the opinion of the organization ({{ organization }}).{% endblocktrans %}
+{% blocktrans %}Your request has been sent successfully, wait for the opinion of the organization ({{ organization }}).{% endblocktrans %}
 
 
 Platform Cooperativism Consortium
