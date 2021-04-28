@@ -3,7 +3,7 @@
 
 {% blocktrans with member_name=member.get_full_name %}The user {{ member_name }}, sent a request to be part of the administrators of the {{ organization }} organization.{% endblocktrans %}
 
-{% trans "Please check the organization profile here" %} {{ organization_url }}
+{% trans "Please check the organization profile here:" %} https://{{ organization_url }}
 
 Platform Cooperativism Consortium
 The New School
