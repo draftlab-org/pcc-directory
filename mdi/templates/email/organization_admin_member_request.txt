@@ -3,7 +3,6 @@
 
 {% blocktrans %}Your request has been sent successfully, wait for the opinion of the organization ({{ organization }}).{% endblocktrans %}
 
-
 Platform Cooperativism Consortium
 The New School
 79 Fifth Avenue, 1601
