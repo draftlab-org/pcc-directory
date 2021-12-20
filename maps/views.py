@@ -17,7 +17,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.forms import inlineformset_factory  # ModelMultipleChoiceField, SelectMultiple
 from accounts.models import UserSocialNetwork
 from mdi.models import Organization, SocialNetwork, OrganizationSocialNetwork, Relationship, EntitiesEntities, \
-    Tool, Niche, Type, Sector, Source, OrganizationAdminMember
+    Tool, Niche, Type, Sector, Source, OrganizationAdminMember, Challenge
 from formtools.wizard.views import SessionWizardView
 from .forms import GeolocationForm, IndividualProfileDeleteForm, IndividualRolesForm, IndividualBasicInfoForm, \
     IndividualMoreAboutYouForm, IndividualDetailedInfoForm, IndividualContactInfoForm, IndividualSocialNetworkFormSet, \
@@ -497,6 +497,14 @@ class OrganizationProfileWizard(LoginRequiredMixin, SessionWizardView):
             org.legal_status.set(form_dict['legal_status'])
         if 'challenges' in form_dict:
             org.challenges.set(form_dict['challenges'])
+            other_challenge = form_dict.get('other_challenge', None)
+            if other_challenge.strip() != '':
+                new_challenge_order = 10
+                new_challenge_order_qs = Challenge.objects.filter(order__lt=9999).order_by('-order').only('order').first()
+                if new_challenge_order_qs is not None:
+                    new_challenge_order = new_challenge_order_qs.order + 10
+                new_challenge = Challenge.objects.get_or_create(name=other_challenge, defaults={'name': other_challenge, 'order': new_challenge_order})[0]
+                org.challenges.add(new_challenge)
         if 'tools' in form_dict:
             org.tools.set(form_dict['tools'])
         for sn in form_dict['formset-social_networks']:
