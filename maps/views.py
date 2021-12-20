@@ -667,7 +667,15 @@ class ToolWizard(LoginRequiredMixin, SessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
-        context.update({'profile_type': 'tool'})
+        context.update({
+            'profile_type': 'tool',
+            'labels': {
+                'cancelTitle': _('Cancel'),
+                'cancelQuestion': _('Are you sure you want to exit the tool editor and discard all of your information?'),
+                'cancelConfirm': _('Yes, exit and discard all info'),
+                'cancelDismiss': _('No, return to tool editor')
+            },
+        })
         if self.steps.current == 'basic_info':
             niche_dict = {}
             niches = Niche.objects.all()
