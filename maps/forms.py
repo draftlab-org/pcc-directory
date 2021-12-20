@@ -1047,6 +1047,13 @@ class OrganizationChallengesForm(BaseModelForm):
         help_text=_('Choose all that apply.'),
         widget=CheckboxSelectMultiple(attrs={'class': 'input-group checkbox'})
     )
+    other_challenge = forms.CharField(
+        required=False,
+        max_length=100,
+        min_length=3,
+        label=_('Other'),
+        help_text=_("If the challenge don't exist above."),
+    )
     class Meta:
         model = Challenge
         fields = ['challenges']
