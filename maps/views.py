@@ -709,6 +709,11 @@ class ToolUpdate(LoginRequiredMixin, UpdateView):
     model = Tool
     template_name = 'maps/profiles/tool/update.html'
 
+    def get_success_url(self):
+        """Return the URL to redirect to after processing a valid form."""
+        messages.success(self.request, _("Tool updated with successfully."))
+        return reverse('edit-tool', kwargs={'pk': self.object.pk})
+
     def get_form_class(self):
         return ToolUpdateForm
 
