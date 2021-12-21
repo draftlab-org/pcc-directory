@@ -78,6 +78,11 @@
         {% if form.coop_made.help_text %}
         <span class="helptext">{{ form.coop_made.help_text | safe }}</span>
         {% endif %}
+        <div class="spacer"></div>
+            <button class="button" type="submit">{% trans 'Save' %}</button>
         </div>
     </form>
+    <p class="align-center">
+        <a href="/" id="cancel-tool-edition" type="button" class="button button--borderless"><span class="button__label">{% trans 'Cancel' %}</span></a>
+    </p>
 {% endblock %}
