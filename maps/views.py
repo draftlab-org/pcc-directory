@@ -731,6 +731,15 @@ class ToolUpdate(LoginRequiredMixin, UpdateView):
         context = super(ToolUpdate, self).get_context_data(**kwargs)
         niche_dict = {}
         niches = Niche.objects.all()
+        tool = context.get('tool', None)
+        submitted_user = False
+        if tool:
+            user = self.request.user
+            submitted_user = tool.submitted_by_email == (user.username or user.email)
+            
+        if not submitted_user:
+            messages.warning(self.request, _("You can't edit this tool."))
+            
         for niche in niches:
             parent = niche.parent()
             if parent not in niche_dict:
@@ -739,7 +748,10 @@ class ToolUpdate(LoginRequiredMixin, UpdateView):
                 niche_dict[parent]['children'].append({'id': niche.id, 'name': niche.child()})
             else:
                 niche_dict[parent]['id'] = niche.id
-        context.update({'niche_dict': niche_dict})
+        context.update({
+            'niche_dict': niche_dict,
+            'submitted_user': submitted_user,
+        })
         return context
 
 
