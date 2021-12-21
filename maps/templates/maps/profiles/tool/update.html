@@ -9,6 +9,7 @@
         <div class="page-header">
             <h1>{% trans 'Edit tool' %}</h1>
         </div>
+        {% include 'maps/partials/messages.html' %}
         <div class="form__content">
         {% if form.errors  %}
         {% include 'maps/profiles/errors.html' %}
