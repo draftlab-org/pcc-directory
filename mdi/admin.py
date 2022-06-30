@@ -122,7 +122,7 @@ class PricingAdmin(admin.ModelAdmin):
 @admin.register(OrganizationAdminMember)
 class OrganizationAdminMemberAdmin(admin.ModelAdmin):
     fields = ('organization', 'member', 'approved', )
-    list_display = ('organization', 'get_admin_member', 'approved', 'get_opinion_made_by', \
+    list_display = ('organization', 'get_admin_member', 'get_admin_email', 'approved', 'get_opinion_made_by', \
         'left_at', 'created_at', 'updated_at', )
     list_filter = ('approved', 'created_at', 'left_at', )
     search_fields = ('organization__name', 'organization__description', \
@@ -137,6 +137,14 @@ class OrganizationAdminMemberAdmin(admin.ModelAdmin):
     get_admin_member.short_description = 'Member Name'
     get_admin_member.empty_value_display = '-'
     get_admin_member.admin_order_field = 'member__name'
+
+    def get_admin_email(self, obj):
+         if not obj.member:
+            return None
+         return mark_safe('<a href="%saccounts/user/%s/change/" target="_blank">%s</a>' % (reverse('admin:index'), obj.member.id, obj.member.email))
+    get_admin_email.short_description = 'Member email'
+    get_admin_email.empty_value_display = '-'
+    get_admin_email.admin_order_field = 'member__email'
     
     def get_opinion_made_by(self, obj):
         if not obj.opinion_made_by:
