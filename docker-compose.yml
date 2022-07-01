@@ -3,6 +3,8 @@ version: '2.4'
 services:
   app:
     container_name: platform-coop-directory_app
+    volumes:
+      - ./.env:/app/.env
     build:
       context: .
       dockerfile: Dockerfile
