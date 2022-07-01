@@ -2,7 +2,7 @@ version: '2.4'
 
 services:
   app:
-    container_name: platform-coop-directory_app_1
+    container_name: platform-coop-directory_app
     build:
       context: .
       dockerfile: Dockerfile
@@ -42,7 +42,7 @@ services:
 
   db:
     image: postgis/postgis:12-3.0
-    container_name: platform-coop-directory_db
+    container_name: platform-coop-directory_db_1
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
