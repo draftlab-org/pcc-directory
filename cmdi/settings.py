@@ -44,7 +44,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # See https://stackoverflow.com/questions/30015462/django-ignoring-debug-value-when-i-use-os-environ-why
 DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*')
 if ALLOWED_HOSTS != '':
     ALLOWED_HOSTS = ALLOWED_HOSTS.split(' ')
 
