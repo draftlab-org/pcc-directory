@@ -9,6 +9,8 @@ deploy_application:
   only:
     - release
   stage: deploy
+  before_script:
+    - touch .env
   script:
     - docker-compose up --build -d --force-recreate
   variables:
