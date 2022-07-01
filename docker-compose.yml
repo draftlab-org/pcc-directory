@@ -35,8 +35,6 @@ services:
     networks:
       - default
     restart: always
-    volumes:
-      - ./.env:/app/.env
     depends_on:
       db:
         condition: service_healthy

@@ -14,7 +14,9 @@ import dj_database_url
 import os
 import dotenv
 from distutils.util import strtobool
-dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
+
+if os.path.exists(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')):
+    dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
