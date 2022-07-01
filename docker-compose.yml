@@ -9,6 +9,7 @@ services:
       args:
         - MAP_ASSETS_BASE_URL=${MAP_ASSETS_BASE_URL}
         - MAP_STYLE=${MAP_STYLE}
+        - SECRET_KEY=${SECRET_KEY}
     ports:
       - ${APP_PORT}:8000
     environment:
