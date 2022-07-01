@@ -42,7 +42,7 @@ services:
 
   db:
     image: postgis/postgis:12-3.0
-    container_name: platform-coop-directory_db_1
+    container_name: platform-coop-directory_db
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
