@@ -8,8 +8,6 @@ deploy_application:
     - PCC-HOM
   only:
     - release
-  dependencies:
-    - release_upload
   stage: deploy
   script:
     - docker-compose up --build -d --force-recreate
