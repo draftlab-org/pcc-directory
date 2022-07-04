@@ -37,6 +37,8 @@ services:
       - MAP_STYLE=${MAP_STYLE}
     networks:
       - default
+      - proxy
+      - reverse
     restart: always
     depends_on:
       db:
@@ -63,4 +65,9 @@ services:
       - default
 
 networks:
-  default:
+  proxy:
+    external:
+      name: proxy
+  reverse:
+    external:
+      name: reverse-proxy_default
