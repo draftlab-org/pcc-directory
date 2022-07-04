@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.db.models import Sum, Count, Q, Value
 from django.db.models.functions import Concat
+from django.template.defaultfilters import lower
 from django_countries import countries
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
@@ -923,14 +924,14 @@ class OrganizationLeave(DeleteView):
 def _change_to_default_argument(argument):
     default = 'Platform coop'
     switcher = {
-        'Platform cooperative': default,
-        'Platform coops': default,
-        'Platform co-op': default,
-        'Platform co-ops': default,
-        'Platform Cooperatives': default,
+        'platform cooperative': default,
+        'platform coops': default,
+        'platform co-op': default,
+        'platform co-ops': default,
+        'platform cooperatives': default
     }
 
-    return switcher.get(argument, argument)
+    return switcher.get(argument.lower(), argument)
 
 
 class SearchResultsView(ListView):
@@ -940,6 +941,7 @@ class SearchResultsView(ListView):
     def get_queryset(self):
         query = self.request.GET.get('s')
         query = _change_to_default_argument(query)
+        print(query)
         object_list = Organization.objects.filter(
             Q(name__icontains=query) | Q(type__name__icontains=query) | Q(sectors__name__icontains=query) | Q(categories__name__icontains=query) | Q(description__icontains=query) | Q(city__icontains=query) | Q(state__icontains=query) | Q(country__exact=query) | Q(legal_status__name__icontains=query)
         ).distinct()
