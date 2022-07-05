@@ -6,6 +6,7 @@ deploy_application:
     - PCC-HOM
   only:
     - release
+    - master
   stage: deploy
   before_script:
     - touch .env
