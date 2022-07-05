@@ -26,7 +26,9 @@ This project requires:
 
 ### Docker Installation
 
-TODO.
+1. Copy `.env-example` to `.env` and fill in the appropriate credentials.
+2. Type in terminal `set +a && . ./.env && set -a` to import environments from file.
+3. Type `docker compose up --build -d`
 
 ## Contributing
 

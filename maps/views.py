@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.db.models import Sum, Count, Q, Value
 from django.db.models.functions import Concat
+from django.template.defaultfilters import lower
 from django_countries import countries
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
@@ -474,10 +475,10 @@ class OrganizationProfileWizard(LoginRequiredMixin, SessionWizardView):
         org = Organization(admin_email=user.email)
 
         check_relationships = (
-            'languages', 'categories', 'sectors', 
-            'formset-social_networks', 'legal_status', 
-            'challenges', 'tools', 'source_code',) 
-        
+            'languages', 'categories', 'sectors',
+            'formset-social_networks', 'legal_status',
+            'challenges', 'tools', 'source_code',)
+
         for k, v in form_dict.items():
             if k not in check_relationships:
                 setattr(org, k, v)
@@ -487,7 +488,7 @@ class OrganizationProfileWizard(LoginRequiredMixin, SessionWizardView):
         org.source = source
         org.save()
         org.languages.set(form_dict['languages'])
-        
+
         if form_dict['type'].name == 'Cooperative':
             # We don't need to set these for non-coops at present.
             org.categories.set(form_dict['categories'])
@@ -736,10 +737,10 @@ class ToolUpdate(LoginRequiredMixin, UpdateView):
         if tool:
             user = self.request.user
             submitted_user = tool.submitted_by_email == (user.username or user.email)
-            
+
         if not submitted_user:
             messages.warning(self.request, _("You can't edit this tool."))
-            
+
         for niche in niches:
             parent = niche.parent()
             if parent not in niche_dict:
@@ -775,15 +776,15 @@ def organization_detail(request, organization_id):
         members.append(get_user_model().objects.get(id=relationship.from_ind.id))
     for relationship in founder_of_relationships:
         founders.append(get_user_model().objects.get(id=relationship.from_ind.id))
-    
-    
+
+
     organization_admins_members = None
     is_organization_admin_member = False
     user = get_user(request)
     if user.is_authenticated and (organization.admin_email == user.email or organization.organization_admins_members.filter(approved=True, member=user, left_at__isnull=True).exists()):
         is_organization_admin_member = True
         organization_admins_members = organization.organization_admins_members.filter(approved__isnull=True)
-    
+
     context = {
         'organization': organization,
         'members': members,
@@ -802,15 +803,15 @@ def organization_request_admin(request, organization_id):
     if organization.organization_admins_members.filter(member=member, approved__isnull=True).exists():
         messages.info(request, _("You have already submitted a request to this organization, please wait for verification."))
         return redirect(redirect_to)
-    
+
     if organization.organization_admins_members.filter(member=member, approved=True, left_at__isnull=True).exists():
         messages.info(request, _("You are already part of this organization!"))
         return redirect(redirect_to)
-    
+
     if organization.organization_admins_members.filter(member=member, approved=False, left_at__isnull=True).exists():
         messages.info(request, _("You already have a denied request for that organization. Contact the administration."))
         return redirect(redirect_to)
-    
+
     try:
         created = OrganizationAdminMember.objects.create(member=member, organization=organization)
         if created:
@@ -821,9 +822,9 @@ def organization_request_admin(request, organization_id):
     except Exception as err:
         logger.error(err)
         messages.error(request, _("We were unable to submit your request, please try again later."))
-    
+
     return redirect(redirect_to)
-    
+
 
 
 @login_required
@@ -831,20 +832,20 @@ def opinion_request_organization_admin(request, organization_id):
     if request.method.upper() != 'POST':
         messages.error(request, _("Method not allowed."))
         return redirect(request.headers.get('Referer', '/'))
-    
+
     organization = get_object_or_404(Organization, pk=organization_id)
     member = get_object_or_404(get_user_model(), pk=request.POST.get('member_id'))
     user = get_user(request)
     redirect_to = reverse('organization-detail', kwargs={'organization_id': organization_id})
-    
+
     if not user.is_authenticated or (organization.admin_email != user.email and not organization.organization_admins_members.filter(approved=True, member=user).exists()):
         messages.warning(request, _("You are not allowed to perform this action!"))
         return redirect(redirect_to)
-    
+
     if not organization.organization_admins_members.filter(member=member, approved__isnull=True).exists():
         messages.info(request, _("No requests were found for this member in this organization!"))
         return redirect(redirect_to)
-    
+
     try:
         approved = bool(int(request.POST.get('approve')))
         member_request = OrganizationAdminMember.objects.filter(member=member, organization=organization, approved__isnull=True).first()
@@ -857,7 +858,7 @@ def opinion_request_organization_admin(request, organization_id):
         messages.error(request, _("We were unable to perform your action, please try again later."))
     return redirect(redirect_to)
 
-    
+
 
 # Individual
 def individual_detail(request, user_id):
@@ -909,15 +910,29 @@ class OrganizationLeave(DeleteView):
         success_url = self.success_url
         user = get_user(request)
         member = obj.organization_admins_members.filter(member=user, approved=True, left_at__isnull=True).first()
-        
+
         if not member:
             messages.warning(request, _(self.not_found_message % obj.__dict__))
             return HttpResponseRedirect(success_url)
-        
+
         member.left_at = now()
         member.save()
         messages.success(self.request, self.success_message % obj.__dict__)
         return HttpResponseRedirect(success_url)
+
+
+def _change_to_default_argument(argument):
+    default = 'Platform coop'
+    switcher = {
+        'platform cooperative': default,
+        'platform coops': default,
+        'platform co-op': default,
+        'platform co-ops': default,
+        'platform cooperatives': default
+    }
+
+    return switcher.get(argument.lower(), argument)
+
 
 class SearchResultsView(ListView):
     model = Organization
@@ -925,6 +940,8 @@ class SearchResultsView(ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('s')
+        query = _change_to_default_argument(query)
+        print(query)
         object_list = Organization.objects.filter(
             Q(name__icontains=query) | Q(type__name__icontains=query) | Q(sectors__name__icontains=query) | Q(categories__name__icontains=query) | Q(description__icontains=query) | Q(city__icontains=query) | Q(state__icontains=query) | Q(country__exact=query) | Q(legal_status__name__icontains=query)
         ).distinct()

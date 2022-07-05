@@ -14,7 +14,9 @@ import dj_database_url
 import os
 import dotenv
 from distutils.util import strtobool
-dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
+
+if os.path.exists(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')):
+    dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,7 +44,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # See https://stackoverflow.com/questions/30015462/django-ignoring-debug-value-when-i-use-os-environ-why
 DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*')
 if ALLOWED_HOSTS != '':
     ALLOWED_HOSTS = ALLOWED_HOSTS.split(' ')
 

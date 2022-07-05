@@ -22,6 +22,8 @@ FROM python:3.8.3
 
 ENV PYTHONUNBUFFERED 1
 
+ARG SECRET_KEY
+
 RUN apt-get update                             && \
     apt-get install -y --no-install-recommends    \
         gdal-bin=2.4.0+dfsg-1+b1                  \

@@ -1,7 +1,9 @@
 {% load i18n %}
 {% trans "Hello," %}
 
-{% blocktrans with member_name=member.get_full_name %}The user {{ member_name }}, sent a request to be part of the administrators of the {{ organization }} organization.{% endblocktrans %}
+{% firstof member.get_full_name member.email as member_name %}
+
+{% blocktrans %}The user {{ member_name }}, sent a request to be part of the administrators of the {{ organization }} organization.{% endblocktrans %}
 
 {% trans "Please check the organization profile here:" %} {{ organization_url }}
 
