@@ -38,9 +38,9 @@ RUN pip install -r requirements.txt
 
 COPY . /app/
 
-RUN python manage.py collectstatic --no-input --clear
-
 COPY --from=static_assets /app/maps /app/
+
+RUN python manage.py collectstatic --no-input --clear
 
 EXPOSE 8000
 
