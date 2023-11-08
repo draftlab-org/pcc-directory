@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, GroupSerializer, OrganizationSerializer, SectorSerializer, ToolSerializer, OrganizationIndicatorsSerializer
 from .models import Organization, Sector, Tool, License
 from rest_framework.response import Response
@@ -33,6 +34,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all().order_by('date_joined')
     serializer_class = UserSerializer
     http_method_names = ['get', ]
+    permission_classes = [IsAuthenticated]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -42,6 +44,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     http_method_names = ['get', ]
+    permission_classes = [IsAuthenticated]
 
 
 class SectorViewSet(viewsets.ModelViewSet):
