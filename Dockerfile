@@ -18,29 +18,30 @@ RUN npm run build
 
 
 
-FROM python:3.8.3
+FROM python:3.12.0
 
 ENV PYTHONUNBUFFERED 1
 
 ARG SECRET_KEY
 
-RUN apt-get update                             && \
-    apt-get install -y --no-install-recommends    \
-        gdal-bin=2.4.0+dfsg-1+b1                  \
-        gunicorn=19.9.0-1                      && \
+RUN apt update && \
+    apt install software-properties-common python3-launchpadlib --yes && \
+    add-apt-repository ppa:ubuntugis/ppa --yes && \
+    apt install -y --no-install-recommends build-essential gdal-bin libpq-dev && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY requirements.txt ./
 
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 COPY . /app/
 
-RUN python manage.py collectstatic --no-input --clear
-
 COPY --from=static_assets /app/maps /app/
+
+RUN python manage.py collectstatic --no-input --clear
 
 EXPOSE 8000
 
