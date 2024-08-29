@@ -1,5 +1,3 @@
-version: '2.4'
-
 services:
   app:
     container_name: platform-coop-directory_app
@@ -45,7 +43,7 @@ services:
         condition: service_healthy
 
   db:
-    image: postgis/postgis:12-3.0
+    image: postgis/postgis:13-3.1
     container_name: platform-coop-directory_db
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
@@ -66,8 +64,8 @@ services:
 
 networks:
   proxy:
-    external:
-      name: proxy
+    external: true
+    name: proxy
   reverse:
-    external:
-      name: reverse-proxy_default
+    external: true
+    name: reverse-proxy_default
