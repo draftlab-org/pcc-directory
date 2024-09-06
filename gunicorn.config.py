@@ -11,7 +11,7 @@ OTEL_EXPORTER_OTLP_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
 
 
 def post_fork(server, worker):
-    print(f"post_fork\nendpoint: {OTEL_EXPORTER_OTLP_ENDPOINT}\n")
+    server.log.info("otel endpoint: %s", OTEL_EXPORTER_OTLP_ENDPOINT)
     server.log.info("Worker spawned (pid: %s)", worker.pid)
 
     otlp_span_processor = BatchSpanProcessor(OTLPSpanExporter())
