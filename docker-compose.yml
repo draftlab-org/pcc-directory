@@ -62,7 +62,7 @@ services:
       - ${POSTGRES_PORT}:5432
     restart: always
     volumes:
-      - ${POSTGRES_DATADIR}:/var/lib/postgresql/data
+      - ${POSTGRES_DATADIR}:/var/lib/postgresql@13/data
     networks:
       - default
 

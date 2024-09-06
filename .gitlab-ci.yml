@@ -9,6 +9,7 @@ deploy_application_hom:
   stage: deploy
   before_script:
     - touch .env
+    - echo "ENV=hom" >> .env
     - echo "PROJECT_ID=${PROJECT_ID}" >> .env
     - echo "APP_PORT=${APP_PORT}" >> .env
     - echo "POSTGRES_USER=${POSTGRES_USER}" >> .env
@@ -38,6 +39,7 @@ deploy_application_hom:
   script:
     - docker-compose up --build -d --force-recreate
   variables:
+    ENV: hom
     PROJECT_ID: $PROJECT_ID
     APP_PORT: $APP_PORT
     POSTGRES_USER: $POSTGRES_USER
@@ -72,35 +74,37 @@ deploy_application_prod:
   stage: deploy
   before_script:
     - touch .env
-    - echo "PROJECT_ID=${PROJECT_ID}" > .env
-    - echo "APP_PORT=${APP_PORT}" > .env
-    - echo "POSTGRES_USER=${POSTGRES_USER}" > .env
-    - echo "POSTGRES_USER=${POSTGRES_USER}" > .env
-    - echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" > .env
-    - echo "POSTGRES_DB=${POSTGRES_DB}" > .env
-    - echo "POSTGRES_DATADIR=${POSTGRES_DATADIR}" > .env
-    - echo "POSTGRES_PORT=${POSTGRES_PORT}" > .env
-    - echo "ALLOWED_HOSTS=${ALLOWED_HOSTS}" > .env
-    - echo "DEBUG=${DEBUG}" > .env
-    - echo "DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}" > .env
-    - echo "DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}" > .env
-    - echo "MAP_STYLE=${MAP_STYLE}" > .env
-    - echo "MAP_ASSETS_BASE_URL=${MAP_ASSETS_BASE_URL}" > .env
-    - echo "HERE_API_KEY=${HERE_API_KEY}" > .env
-    - echo "VIRTUAL_HOST=${VIRTUAL_HOST}" > .env
-    - echo "VIRTUAL_PORT=${VIRTUAL_PORT}" > .env
-    - echo "LETSENCRYPT_HOST=${LETSENCRYPT_HOST}" > .env
-    - echo "LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}" > .env
-    - echo "SECRET_KEY=${SECRET_KEY}" > .env
-    - echo "DJANGO_EMAIL_HOST=${DJANGO_EMAIL_HOST}" > .env
-    - echo "EMAIL_PORT=${EMAIL_PORT}" > .env
-    - echo "EMAIL_HOST_USER=${EMAIL_HOST_USER}" > .env
-    - echo "EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}" > .env
-    - echo "EMAIL_USE_TLS=${EMAIL_USE_TLS}" > .env
-    - echo "EMAIL_USE_SSL=${EMAIL_USE_SSL}" > .env
+    - echo "ENV=prod" >> .env
+    - echo "PROJECT_ID=${PROJECT_ID}" >> .env
+    - echo "APP_PORT=${APP_PORT}" >> .env
+    - echo "POSTGRES_USER=${POSTGRES_USER}" >> .env
+    - echo "POSTGRES_USER=${POSTGRES_USER}" >> .env
+    - echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> .env
+    - echo "POSTGRES_DB=${POSTGRES_DB}" >> .env
+    - echo "POSTGRES_DATADIR=${POSTGRES_DATADIR}" >> .env
+    - echo "POSTGRES_PORT=${POSTGRES_PORT}" >> .env
+    - echo "ALLOWED_HOSTS=${ALLOWED_HOSTS}" >> .env
+    - echo "DEBUG=${DEBUG}" >> .env
+    - echo "DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}" >> .env
+    - echo "DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}" >> .env
+    - echo "MAP_STYLE=${MAP_STYLE}" >> .env
+    - echo "MAP_ASSETS_BASE_URL=${MAP_ASSETS_BASE_URL}" >> .env
+    - echo "HERE_API_KEY=${HERE_API_KEY}" >> .env
+    - echo "VIRTUAL_HOST=${VIRTUAL_HOST}" >> .env
+    - echo "VIRTUAL_PORT=${VIRTUAL_PORT}" >> .env
+    - echo "LETSENCRYPT_HOST=${LETSENCRYPT_HOST}" >> .env
+    - echo "LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}" >> .env
+    - echo "SECRET_KEY=${SECRET_KEY}" >> .env
+    - echo "DJANGO_EMAIL_HOST=${DJANGO_EMAIL_HOST}" >> .env
+    - echo "EMAIL_PORT=${EMAIL_PORT}" >> .env
+    - echo "EMAIL_HOST_USER=${EMAIL_HOST_USER}" >> .env
+    - echo "EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}" >> .env
+    - echo "EMAIL_USE_TLS=${EMAIL_USE_TLS}" >> .env
+    - echo "EMAIL_USE_SSL=${EMAIL_USE_SSL}" >> .env
   script:
     - docker-compose up --build -d --force-recreate
   variables:
+    ENV: prod
     PROJECT_ID: $PROJECT_ID
     APP_PORT: $APP_PORT
     POSTGRES_USER: $POSTGRES_USER
