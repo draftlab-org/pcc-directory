@@ -41,8 +41,9 @@ COPY . /app/
 
 COPY --from=static_assets /app/maps /app/
 
-RUN python manage.py collectstatic --no-input --clear
+RUN python manage.py collectstatic --no-input --clear && \
+  opentelemetry-bootstrap --action=install
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "cmdi.wsgi"]
+CMD ["opentelemetry-instrument", "gunicorn", "cmdi.wsgi", "-c", "gunicorn.config.py", "--workers", "2", "--threads", "2", "--reload", "--bind", "0.0.0.0:8000"]
