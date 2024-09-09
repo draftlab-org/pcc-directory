@@ -33,7 +33,7 @@ services:
       - VIRTUAL_HOST=${VIRTUAL_HOST}
       - MAP_ASSETS_BASE_URL=${MAP_ASSETS_BASE_URL}
       - MAP_STYLE=${MAP_STYLE}
-      - OTEL_SERVICE_NAME=pcc-platform-coop-directory
+      - OTEL_SERVICE_NAME=pcc-platform-coop-directory-${ENV}
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${SIGNOZ_ADDR}:4317
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
       - OTEL_PYTHON_DJANGO_INSTRUMENT=True
