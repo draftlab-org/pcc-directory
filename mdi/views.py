@@ -2,13 +2,14 @@ import sys
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.core.cache import cache
 from django.shortcuts import render, reverse
 from django.http import HttpResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+
+from cached import viewsets as cached_viewsets
 from .serializers import UserSerializer, GroupSerializer, OrganizationSerializer, SectorSerializer, ToolSerializer, OrganizationIndicatorsSerializer
 from .models import Organization, Sector, Tool, License
 from rest_framework.response import Response
@@ -68,13 +69,14 @@ class ToolViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', ]
 
 
-class OrganizationViewSet(viewsets.ModelViewSet):
+class OrganizationViewSet(cached_viewsets.CachedModelViewSet):
     """
     API endpoint that allows Organizations to be viewed.
     """
     queryset = Organization.objects.all()  # filter(geom__isnull=False)
     serializer_class = OrganizationSerializer
     http_method_names = ['get', ]
+    CACHE_KEY_PREFIX = 'OrganizationsViewSet'
     
     @swagger_auto_schema(
         responses={ status.HTTP_200_OK: OrganizationIndicatorsSerializer }
@@ -87,26 +89,3 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         }
         serializer = OrganizationIndicatorsSerializer(data)
         return Response(serializer.data)
-
-    def get_queryset(self):
-        print('[CACHETEST] get_queryset')
-        print('[CACHETEST] GETTING ORGANIZATION LIST FROM CACHE')
-        queryset = cache.get('organization_queryset_all')
-        if not queryset:
-            print('[CACHETEST] CACHE MISS ORGANIZATION LIST')
-            queryset = Organization.objects.all()
-            cache.set('organization_queryset_all', queryset)
-            print(f'[CACHETEST] ORGANIZATION LIST CACHED {sys.getsizeof(queryset)}')
-        print(f'[CACHETEST] ORGANIZATION LIST {sys.getsizeof(queryset)}')
-        return queryset
-
-    def list(self, request, *args, **kwargs):
-        print('[CACHETEST] LIST ENDPOINT')
-        list_response = cache.get('organization_list')
-        if not list_response:
-            print('[CACHETEST] CACHE MISS LIST')
-            list_response = super().list(request, *args, **kwargs)
-            cache.set('organization_list', list_response)
-            print(f'[CACHETEST] LIST CACHED {sys.getsizeof(list_response)}')
-        print(f'[CACHETEST] LIST RESPONSE {sys.getsizeof(list_response)}')
-        return list_response
