@@ -1,3 +1,4 @@
+import logging
 import os
 
 from opentelemetry import trace
@@ -17,6 +18,6 @@ def post_fork(server, worker):
 
     trace.get_tracer_provider().add_span_processor(otlp_span_processor)
 
-    LoggingInstrumentor().instrument()
+    LoggingInstrumentor().instrument(set_logging_format=True, log_level=logging.ERROR)
     DjangoInstrumentor().instrument()
     Psycopg2Instrumentor().instrument(skip_dep_check=True)
