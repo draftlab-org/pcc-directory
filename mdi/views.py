@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.shortcuts import render, reverse
 from django.http import HttpResponse
 from rest_framework import viewsets, status
@@ -79,8 +80,19 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def indicators(self, request, *args, **kwargs):
         data = { 
-            'countries': len(set(self.queryset.exclude(country='').values_list('country', flat=True))),
-            'projects': self.queryset.count()
+            'countries': len(set(self.get_queryset().exclude(country='').values_list('country', flat=True))),
+            'projects': self.get_queryset().count()
         }
         serializer = OrganizationIndicatorsSerializer(data)
         return Response(serializer.data)
+
+    def get_queryset(self):
+        print('get_queryset')
+        print('GETTING ORGANIZATION LIST FROM CACHE')
+        queryset = cache.get('organization_list')
+        if not queryset:
+            print('CACHE MISS ORGANIZATION LIST')
+            queryset = Organization.objects.all()
+            cache.set('organization_list', queryset)
+            print('ORGANIZATION LIST CACHED')
+        return queryset
