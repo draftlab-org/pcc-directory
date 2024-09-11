@@ -11,13 +11,12 @@ OTEL_EXPORTER_OTLP_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
 
 
 def post_fork(server, worker):
-    server.log.info("otel endpoint: %s", OTEL_EXPORTER_OTLP_ENDPOINT)
     server.log.info("Worker spawned (pid: %s)", worker.pid)
 
     otlp_span_processor = BatchSpanProcessor(OTLPSpanExporter())
 
     trace.get_tracer_provider().add_span_processor(otlp_span_processor)
 
-    LoggingInstrumentor().instrument(set_logging_format=True)
-    DjangoInstrumentor().instrument(is_sql_commentor_enabled=True)
-    Psycopg2Instrumentor().instrument(skip_dep_check=True, enable_commenter=True)
+    LoggingInstrumentor().instrument()
+    DjangoInstrumentor().instrument()
+    Psycopg2Instrumentor().instrument(skip_dep_check=True)
