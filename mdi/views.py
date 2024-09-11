@@ -96,3 +96,11 @@ class OrganizationViewSet(viewsets.ModelViewSet):
             cache.set('organization_list', queryset)
             print('ORGANIZATION LIST CACHED')
         return queryset
+
+    def get_object(self):
+        print('get_object')
+        return super().get_object()
+
+    def list(self, request, *args, **kwargs):
+        print('LIST')
+        return super().list(request, *args, **kwargs)
