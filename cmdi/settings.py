@@ -148,6 +148,14 @@ DATABASES = {
     'default': dj_database_url.config(conn_max_age=600)
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379",
+        "TIMEOUT": 259200,  # 3 days
+    }
+}
+
 
 AUTH_USER_MODEL = 'accounts.User'
 
