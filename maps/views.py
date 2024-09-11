@@ -766,8 +766,10 @@ def index(request):
 
 # Organization
 def organization_detail(request, organization_id):
+    print(f"GETTING ORGANIZATION DETAILS FROM CACHE: {organization_id}")
     organization, members, founders = cache.get(f'organization_detail:{organization_id}')
     if not organization:
+        print(f"ORGANIZATION DETAILS NOT FOUND IN CACHE: {organization_id}")
         organization = get_object_or_404(Organization, pk=organization_id)
         member_of_relationship = Relationship.objects.get(name="Member of")
         member_of_relationships = EntitiesEntities.objects.filter(to_org=organization, relationship=member_of_relationship)
@@ -781,6 +783,7 @@ def organization_detail(request, organization_id):
             founders.append(get_user_model().objects.get(id=relationship.from_ind.id))
 
         cache.set(f'organization_detail:{organization_id}', (organization, members, founders))
+        print(f"ORGANIZATION DETAILS SAVED TO CACHE: {organization_id} ({len(organization)}, {len(members)}, {len(founders)})")
 
     organization_admins_members = None
     is_organization_admin_member = False
