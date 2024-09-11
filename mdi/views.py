@@ -1,3 +1,5 @@
+import sys
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.cache import cache
@@ -87,20 +89,24 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def get_queryset(self):
-        print('get_queryset')
-        print('GETTING ORGANIZATION LIST FROM CACHE')
-        queryset = cache.get('organization_list')
+        print('[CACHETEST] get_queryset')
+        print('[CACHETEST] GETTING ORGANIZATION LIST FROM CACHE')
+        queryset = cache.get('organization_queryset_all')
         if not queryset:
-            print('CACHE MISS ORGANIZATION LIST')
+            print('[CACHETEST] CACHE MISS ORGANIZATION LIST')
             queryset = Organization.objects.all()
-            cache.set('organization_list', queryset)
-            print('ORGANIZATION LIST CACHED')
+            cache.set('organization_queryset_all', queryset)
+            print(f'[CACHETEST] ORGANIZATION LIST CACHED {sys.getsizeof(queryset)}')
+        print(f'[CACHETEST] ORGANIZATION LIST {sys.getsizeof(queryset)}')
         return queryset
 
-    def get_object(self):
-        print('get_object')
-        return super().get_object()
-
     def list(self, request, *args, **kwargs):
-        print('LIST')
-        return super().list(request, *args, **kwargs)
+        print('[CACHETEST] LIST ENDPOINT')
+        list_response = cache.get('organization_list')
+        if not list_response:
+            print('[CACHETEST] CACHE MISS LIST')
+            list_response = super().list(request, *args, **kwargs)
+            cache.set('organization_list', list_response)
+            print(f'[CACHETEST] LIST CACHED {sys.getsizeof(list_response)}')
+        print(f'[CACHETEST] LIST RESPONSE {sys.getsizeof(list_response)}')
+        return list_response
