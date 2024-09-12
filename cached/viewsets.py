@@ -10,18 +10,19 @@ logger = logging.getLogger(__name__)
 class CachedModelViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
+        filters = get_filters_as_string(request)
         try:
-            queryset, page = cache.get(f"{self.__class__.__name__}:list:filters:{get_filters_as_string(request)}")
+            queryset, page = cache.get(f"{self.__class__.__name__}:list:filters:{filters}")
         except:
             queryset = None
             page = None
         if queryset is None and page is None:
-            logger.info(f"[CACHE] Cache miss for {self.__class__.__name__}:list")
+            logger.info(f"[CACHE] Cache miss for {self.__class__.__name__}:list:filters:{filters}")
             queryset = self.filter_queryset(self.get_queryset())
             page = self.paginate_queryset(queryset)
-            cache.set(f"{self.__class__.__name__}:list", (queryset, page))
+            cache.set(f"{self.__class__.__name__}:list:filters:{filters}", (queryset, page))
         else:
-            logger.info(f"[CACHE] Cache hit for {self.__class__.__name__}:list")
+            logger.info(f"[CACHE] Cache hit for {self.__class__.__name__}:list:filters:{filters}")
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
