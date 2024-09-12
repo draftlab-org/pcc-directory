@@ -76,8 +76,7 @@ class OrganizationViewSet(cached_viewsets.CachedModelViewSet):
     queryset = Organization.objects.all()  # filter(geom__isnull=False)
     serializer_class = OrganizationSerializer
     http_method_names = ['get', ]
-    CACHE_KEY_PREFIX = 'OrganizationsViewSet'
-    
+
     @swagger_auto_schema(
         responses={ status.HTTP_200_OK: OrganizationIndicatorsSerializer }
     )

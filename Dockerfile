@@ -41,8 +41,7 @@ COPY . /app/
 
 COPY --from=static_assets /app/maps /app/
 
-RUN python manage.py collectstatic --no-input --clear && \
-  opentelemetry-bootstrap --action=install
+RUN python manage.py collectstatic --no-input --clear
 
 EXPOSE 8000
 
