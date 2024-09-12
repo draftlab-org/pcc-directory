@@ -9,6 +9,17 @@ logger = logging.getLogger(__name__)
 
 class CachedModelViewSet(viewsets.ModelViewSet):
 
+    def get_queryset(self):
+        queryset = cache.get(f"{self.__class__.__name__}:get_queryset")
+        if queryset is None:
+            logger.info(f"[CACHE] Cache miss for {self.__class__.__name__}:get_queryset")
+            queryset = super().get_queryset()
+            cache.set(f"{self.__class__.__name__}:get_queryset", queryset)
+            logger.info(f"[CACHE] Cache set for {self.__class__.__name__}:get_queryset")
+        else:
+            logger.info(f"[CACHE] Cache hit for {self.__class__.__name__}:get_queryset")
+        return queryset
+
     def list(self, request, *args, **kwargs):
         print(f"[CACHE] {self.__class__.__name__}:list")
         filters = get_filters_as_string(request)
