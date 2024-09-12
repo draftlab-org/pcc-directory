@@ -766,8 +766,13 @@ def index(request):
 
 # Organization
 def organization_detail(request, organization_id):
-    print(f"GETTING ORGANIZATION DETAILS FROM CACHE: {organization_id}")
-    organization, members, founders = cache.get(f'organization_detail:{organization_id}')
+    try:
+        print(f"GETTING ORGANIZATION DETAILS FROM CACHE: {organization_id}")
+        organization, members, founders = cache.get(f'organization_detail:{organization_id}')
+    except Exception as err:
+        organization = None
+        members = None
+        founders = None
     if not organization:
         print(f"ORGANIZATION DETAILS NOT FOUND IN CACHE: {organization_id}")
         organization = get_object_or_404(Organization, pk=organization_id)
