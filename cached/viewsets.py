@@ -10,14 +10,16 @@ logger = logging.getLogger(__name__)
 class CachedModelViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
+        print(f"[CACHE] {self.__class__.__name__}:list")
         filters = get_filters_as_string(request)
         try:
             queryset, page = cache.get(f"{self.__class__.__name__}:list:filters:{filters}")
         except:
+            print(f"[CACHE] Cache miss for {self.__class__.__name__}:list:filters:{filters}")
             queryset = None
             page = None
         if queryset is None and page is None:
-            logger.info(f"[CACHE] Cache miss for {self.__class__.__name__}:list:filters:{filters}")
+            logger.info(f"[CACHE] Getting data from database")
             queryset = self.filter_queryset(self.get_queryset())
             page = self.paginate_queryset(queryset)
             cache.set(f"{self.__class__.__name__}:list:filters:{filters}", (queryset, page))
