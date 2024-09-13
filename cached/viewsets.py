@@ -65,5 +65,5 @@ class CachedModelViewSet(viewsets.ModelViewSet):
 
 def get_filters_as_string(request):
     filters = request.GET
-    filters_string = "&".join([f"{key}={value}" for key, value in filters.items()])
+    filters_string = "&".join([f"{key}={value}" for key, value in sorted(filters.keys())])
     return filters_string
