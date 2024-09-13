@@ -41,8 +41,9 @@ class CachedModelViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
         print("[CACHE] SERIALIZING")
         serializer = self.get_serializer(queryset, many=True)
+        response_data = serializer.data
         print("[CACHE] SERIALIZING DONE")
-        return Response(serializer.data)
+        return Response(response_data)
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
