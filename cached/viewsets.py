@@ -40,10 +40,18 @@ class CachedModelViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         print("[CACHE] SERIALIZING")
-        serializer = self.get_serializer(queryset, many=True)
-        response_data = serializer.data
+        try:
+            serialized_data = cache.get(f"{self.__class__.__name__}:list:filters:{filters}:serialized")
+        except:
+            print(f"[CACHE] Cache miss for {self.__class__.__name__}:list:filters:{filters}:serialized")
+            serialized_data = None
+        if serialized_data is None:
+            serializer = self.get_serializer(queryset, many=True)
+            serialized_data = serializer.data
+            cache.set(f"{self.__class__.__name__}:list:filters:{filters}:serialized", serialized_data)
+            print(f"[CACHE] Cache set for {self.__class__.__name__}:list:filters:{filters}:serialized")
         print("[CACHE] SERIALIZING DONE")
-        return Response(response_data)
+        return Response(serialized_data)
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
