@@ -39,7 +39,9 @@ class CachedModelViewSet(viewsets.ModelViewSet):
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
+        print("[CACHE] SERIALIZING")
         serializer = self.get_serializer(queryset, many=True)
+        print("[CACHE] SERIALIZING DONE")
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
