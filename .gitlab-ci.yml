@@ -4,6 +4,7 @@ stages:
 deploy_application_hom:
   tags:
     - PCC-HOM
+  environment: staging
   only:
     - release
   stage: deploy
@@ -69,6 +70,7 @@ deploy_application_hom:
 deploy_application_prod:
   tags:
     - PCC-PROD
+  environment: production
   only:
     - master
   stage: deploy
