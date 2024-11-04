@@ -39,7 +39,7 @@ RUN pip install --upgrade pip && \
 
 COPY . /app/
 
-COPY --from=static_assets /app/maps /app/
+COPY --from=static_assets /app/maps /app/maps
 
 RUN python manage.py collectstatic --no-input --clear
 
