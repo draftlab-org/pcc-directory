@@ -35,10 +35,6 @@ services:
       - VIRTUAL_HOST=${VIRTUAL_HOST}
       - MAP_ASSETS_BASE_URL=${MAP_ASSETS_BASE_URL}
       - MAP_STYLE=${MAP_STYLE}
-    networks:
-      - default
-      - proxy
-      - reverse
     restart: always
     depends_on:
       db:
@@ -61,13 +57,4 @@ services:
     restart: always
     volumes:
       - ${POSTGRES_DATADIR}:/var/lib/postgresql/data
-    networks:
-      - default
 
-networks:
-  proxy:
-    external:
-      name: proxy
-  reverse:
-    external:
-      name: reverse-proxy_default
