@@ -39,10 +39,6 @@ services:
       - OTEL_PYTHON_DJANGO_INSTRUMENT=True
       - OTEL_TRACES_EXPORTER=console
       - DJANGO_SETTINGS_MODULE=cmdi.settings
-    networks:
-      - default
-      - proxy
-      - reverse
     restart: always
     depends_on:
       db:
@@ -65,8 +61,6 @@ services:
     restart: always
     volumes:
       - ${POSTGRES_DATADIR}:/var/lib/postgresql@13/data
-    networks:
-      - default
 
   redis:
     image: redis/redis-stack:latest
@@ -77,10 +71,3 @@ services:
     networks:
       - default
 
-networks:
-  proxy:
-    external: true
-    name: proxy
-  reverse:
-    external: true
-    name: reverse-proxy_default
