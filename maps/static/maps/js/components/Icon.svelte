@@ -15,10 +15,8 @@ if (classOverride) {
     className = (size) ? `icon icon--${modifier} icon--${size}` : `icon icon--${modifier}`;
 }
 
-let href = `/static/maps/dist/images/${name}.svg#${name}`;
-href = decodeURIComponent(href);
 </script>
 
 <svg class={className} aria-hidden={ariaHidden} viewBox={viewBox} focusable={focusable}>
-    <use href={href} />
+    <use href="/static/maps/dist/images/{name}.svg" />
 </svg>
