@@ -20,6 +20,7 @@ deploy_application_hom:
     - echo "POSTGRES_DATADIR=${POSTGRES_DATADIR}" >> .env
     - echo "POSTGRES_PORT=${POSTGRES_PORT}" >> .env
     - echo "ALLOWED_HOSTS=${ALLOWED_HOSTS}" >> .env
+    - echo "CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}" >> .env
     - echo "DEBUG=${DEBUG}" >> .env
     - echo "DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}" >> .env
     - echo "DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}" >> .env
@@ -86,6 +87,7 @@ deploy_application_prod:
     - echo "POSTGRES_DATADIR=${POSTGRES_DATADIR}" >> .env
     - echo "POSTGRES_PORT=${POSTGRES_PORT}" >> .env
     - echo "ALLOWED_HOSTS=${ALLOWED_HOSTS}" >> .env
+    - echo "CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}" >> .env
     - echo "DEBUG=${DEBUG}" >> .env
     - echo "DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}" >> .env
     - echo "DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}" >> .env
