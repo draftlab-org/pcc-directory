@@ -21,6 +21,7 @@ STATIC_URL = '/static/'
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
+    '/app/maps',
 )
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -35,6 +36,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # Environment variable values are strings, not Booleans, so we test the value of the string.
 # See https://stackoverflow.com/questions/30015462/django-ignoring-debug-value-when-i-use-os-environ-why
 DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
+
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '*').split(' ')
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*')
 if ALLOWED_HOSTS != '':
@@ -146,6 +149,14 @@ WSGI_APPLICATION = 'cmdi.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(conn_max_age=600)
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379",
+        "TIMEOUT": os.getenv("CACHE_TIMEOUT", None),
+    }
 }
 
 

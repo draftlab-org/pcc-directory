@@ -17,6 +17,7 @@ services:
       - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
       - PROJECT_ID=${PROJECT_ID}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
       - DJANGO_EMAIL_HOST=${DJANGO_EMAIL_HOST}
       - DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}
       - DEBUG=${DEBUG:-false}
@@ -33,9 +34,11 @@ services:
       - VIRTUAL_HOST=${VIRTUAL_HOST}
       - MAP_ASSETS_BASE_URL=${MAP_ASSETS_BASE_URL}
       - MAP_STYLE=${MAP_STYLE}
-      - OTEL_SERVICE_NAME=djangoApp
+      - OTEL_SERVICE_NAME=pcc-platform-coop-directory-${ENV}
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${SIGNOZ_ADDR}:4317
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_PYTHON_DJANGO_INSTRUMENT=True
+      - OTEL_TRACES_EXPORTER=console
       - DJANGO_SETTINGS_MODULE=cmdi.settings
     networks:
       - default
@@ -62,7 +65,16 @@ services:
       - ${POSTGRES_PORT}:5432
     restart: always
     volumes:
-      - ${POSTGRES_DATADIR}:/var/lib/postgresql/data
+      - ${POSTGRES_DATADIR}:/var/lib/postgresql@13/data
+    networks:
+      - default
+
+  redis:
+    image: redis/redis-stack:latest
+    container_name: platform-coop-directory_redis
+    restart: always
+    ports:
+      - "6379:6379"
     networks:
       - default
 
