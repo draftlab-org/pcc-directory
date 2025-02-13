@@ -1,4 +1,4 @@
-FROM node:12.18.0 AS static_assets
+FROM node:18.0 AS static_assets
 
 ARG MAP_ASSETS_BASE_URL
 ARG MAP_STYLE
