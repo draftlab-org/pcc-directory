@@ -14,7 +14,7 @@ RUN npm install
 
 COPY . ./
 
-RUN npm run build
+RUN NODE_OPTIONS=--openssl-legacy-provider npm run build
 
 
 
@@ -24,11 +24,13 @@ ENV PYTHONUNBUFFERED 1
 
 ARG SECRET_KEY
 
-RUN apt-get update                             && \
-    apt-get install -y --no-install-recommends    \
-        gdal-bin=2.4.0+dfsg-1+b1                  \
-        gunicorn=19.9.0-1                      && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gdal-bin \
+        libgdal-dev \
+        gunicorn \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
