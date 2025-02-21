@@ -4,12 +4,8 @@ from django.contrib.gis.db import models
 from django.dispatch import receiver
 from datetime import date
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
 from accounts.models import SocialNetwork
 from django_countries.fields import CountryField
-from django.core.exceptions import ValidationError
-from django.urls import reverse
-from django.db.models import Manager as GeoManager
 from allauth.account.signals import email_changed
 from django.utils.translation import gettext_lazy as _
 

@@ -1,5 +1,5 @@
 from django.contrib.gis import admin
-from django.contrib.gis.admin import ModelAdmin, OSMGeoAdmin, TabularInline
+from django.contrib.gis.admin import ModelAdmin, GISModelAdmin, TabularInline
 from accounts.models import SocialNetwork
 from .models import \
     Category, Challenge, LegalStatus, Organization, OrganizationSocialNetwork, Stage, Type, Tool, License, \
@@ -66,7 +66,7 @@ class OrganizationSocialNetworkInline(TabularInline):
 
 
 @admin.register(Organization)
-class OrganizationAdmin(OSMGeoAdmin):
+class OrganizationAdmin(GISModelAdmin):
     list_display = ('name', 'city', 'country',)
     list_filter = ('source', 'categories', 'type', 'sectors', 'country',)
     search_fields = ['name', 'description', ]

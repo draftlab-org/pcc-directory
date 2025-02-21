@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.contrib.auth import get_user_model, get_user
 from django.contrib.auth.decorators import login_required
@@ -765,18 +766,29 @@ def index(request):
 
 # Organization
 def organization_detail(request, organization_id):
-    organization = get_object_or_404(Organization, pk=organization_id)
-    member_of_relationship = Relationship.objects.get(name="Member of")
-    member_of_relationships = EntitiesEntities.objects.filter(to_org=organization, relationship=member_of_relationship)
-    founder_of_relationship = Relationship.objects.get(name="Founder of")
-    founder_of_relationships = EntitiesEntities.objects.filter(to_org=organization, relationship=founder_of_relationship)
-    members = []
-    founders = []
-    for relationship in member_of_relationships:
-        members.append(get_user_model().objects.get(id=relationship.from_ind.id))
-    for relationship in founder_of_relationships:
-        founders.append(get_user_model().objects.get(id=relationship.from_ind.id))
+    try:
+        print(f"GETTING ORGANIZATION DETAILS FROM CACHE: {organization_id}")
+        organization, members, founders = cache.get(f'organization_detail:{organization_id}')
+    except Exception as err:
+        organization = None
+        members = None
+        founders = None
+    if not organization:
+        print(f"ORGANIZATION DETAILS NOT FOUND IN CACHE: {organization_id}")
+        organization = get_object_or_404(Organization, pk=organization_id)
+        member_of_relationship = Relationship.objects.get(name="Member of")
+        member_of_relationships = EntitiesEntities.objects.filter(to_org=organization, relationship=member_of_relationship)
+        founder_of_relationship = Relationship.objects.get(name="Founder of")
+        founder_of_relationships = EntitiesEntities.objects.filter(to_org=organization, relationship=founder_of_relationship)
+        members = []
+        founders = []
+        for relationship in member_of_relationships:
+            members.append(get_user_model().objects.get(id=relationship.from_ind.id))
+        for relationship in founder_of_relationships:
+            founders.append(get_user_model().objects.get(id=relationship.from_ind.id))
 
+        cache.set(f'organization_detail:{organization_id}', (organization, members, founders))
+        print(f"ORGANIZATION DETAILS SAVED TO CACHE: {organization_id}")
 
     organization_admins_members = None
     is_organization_admin_member = False
@@ -941,10 +953,12 @@ class SearchResultsView(ListView):
     def get_queryset(self):
         query = self.request.GET.get('s')
         query = _change_to_default_argument(query)
-        print(query)
-        object_list = Organization.objects.filter(
-            Q(name__icontains=query) | Q(type__name__icontains=query) | Q(sectors__name__icontains=query) | Q(categories__name__icontains=query) | Q(description__icontains=query) | Q(city__icontains=query) | Q(state__icontains=query) | Q(country__exact=query) | Q(legal_status__name__icontains=query)
-        ).distinct()
+        object_list = cache.get(f"organization_search_results:{query}")
+        if not object_list:
+            object_list = Organization.objects.filter(
+                Q(name__icontains=query) | Q(type__name__icontains=query) | Q(sectors__name__icontains=query) | Q(categories__name__icontains=query) | Q(description__icontains=query) | Q(city__icontains=query) | Q(state__icontains=query) | Q(country__exact=query) | Q(legal_status__name__icontains=query)
+            ).distinct()
+            cache.set(f"organization_search_results:{query}", object_list)
         return object_list
 
     def get_context_data(self, **kwargs):
