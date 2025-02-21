@@ -34,7 +34,7 @@ stages:
       echo "EMAIL_USE_TLS=${EMAIL_USE_TLS}" >> .env
       echo "EMAIL_USE_SSL=${EMAIL_USE_SSL}" >> .env
   script:
-    - docker-compose up --build -d --force-recreate
+    - sudo docker-compose up --build -d --force-recreate
   variables:
     PROJECT_ID: $PROJECT_ID
     APP_PORT: $APP_PORT
