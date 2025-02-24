@@ -14,6 +14,7 @@ stages:
       echo "POSTGRES_DB=${POSTGRES_DB}" >> .env
       echo "POSTGRES_DATADIR=${POSTGRES_DATADIR}" >> .env
       echo "POSTGRES_PORT=${POSTGRES_PORT}" >> .env
+      echo "REDIS_PORT=${REDIS_PORT}" > .env
       echo "ALLOWED_HOSTS=\"${ALLOWED_HOSTS}\"" >> .env
       echo "CSRF_TRUSTED_ORIGINS=\"${CSRF_TRUSTED_ORIGINS}\"" >> .env
       echo "DEBUG=${DEBUG:-False}" >> .env
