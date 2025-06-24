@@ -7,6 +7,7 @@ stages:
     - touch .env
     - |
       echo "ENV=${ENV:-production}" >> .env
+      echo "CACHE_TIMEOUT=${CACHE_TIMEOUT}" >> .env
       echo "PROJECT_ID=${PROJECT_ID}" >> .env
       echo "APP_PORT=${APP_PORT}" >> .env
       echo "POSTGRES_USER=${POSTGRES_USER}" >> .env
