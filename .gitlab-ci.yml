@@ -64,7 +64,6 @@ deploy_application_prod:
   environment: production
   variables:
     ENV: prod
-    POSTGRES_DATADIR: /etc/database/directory
   only:
     - master
 
