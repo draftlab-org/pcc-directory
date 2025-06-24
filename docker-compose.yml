@@ -42,6 +42,8 @@ services:
       - OTEL_TRACES_EXPORTER=console
       - DJANGO_SETTINGS_MODULE=cmdi.settings
     restart: always
+    networks:
+      - default
     depends_on:
       db:
         condition: service_healthy
