@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from rest_framework.serializers import SerializerMethodField
 from django.contrib.auth.models import Group
 from accounts.models import Role
 from mdi.models import Organization, Type, SocialNetwork, Sector, Tool, License, Language, Niche

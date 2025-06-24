@@ -19,7 +19,7 @@
      href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
     {% with icon=provider.name|slugify %}
     <svg class="icon icon--{{ icon }}" aria-hidden="true" viewBox="0 0 20 20" focusable="false">
-        <use href="{% static 'maps/dist/images/'|add:icon|add:'.svg#'|add:icon %}"/>
+        <use href="{% static 'maps/dist/images/'|add:icon|add:'.svg#'|add:icon|safe %}"/>
     </svg>
     {% endwith %}
     Log in with {{provider.name}}
