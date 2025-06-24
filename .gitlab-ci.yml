@@ -35,7 +35,7 @@ stages:
       echo "EMAIL_USE_TLS=${EMAIL_USE_TLS:-True}" >> .env
       echo "EMAIL_USE_SSL=${EMAIL_USE_SSL:-False}" >> .env
   script:
-    - sudo docker-compose up --build -d --force-recreate
+    - docker-compose up --build -d --force-recreate
 
 deploy_application_dev:
   extends: .deploy_application
