@@ -145,3 +145,7 @@ dmypy.json
 
 # VS Code settings
 .vscode
+
+
+# unused gitlab-ci configs
+.gitlab-ci.yml
