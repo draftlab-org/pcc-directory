@@ -11,7 +11,7 @@ services:
     ports:
       - ${APP_PORT}:8000
     environment:
-      - DATABASE_URL=postgis://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - DATABASE_URL=${DATABASE_URL}
       - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
       - PROJECT_ID=${PROJECT_ID}
       - CACHE_TIMEOUT=${CACHE_TIMEOUT}
@@ -31,31 +31,6 @@ services:
       - MAP_STYLE=${MAP_STYLE}
       - DJANGO_SETTINGS_MODULE=cmdi.settings
     restart: always
-    networks:
-      - default
-    depends_on:
-      db:
-        condition: service_healthy
-
-  db:
-    image: postgis/postgis:13-3.1
-    container_name: pcc-directory_db
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    healthcheck:
-      test: ["CMD", "pg_isready", "-q", "-U", "${POSTGRES_DB}"]
-      timeout: 60s
-      interval: 10s
-      retries: 10
-    ports:
-      - ${POSTGRES_PORT}:5432
-    restart: always
-    volumes:
-      - /etc/databases/directory:/var/lib/postgresql/data
-    networks:
-      - default
 
   redis:
     image: redis/redis-stack:latest
@@ -65,5 +40,3 @@ services:
     restart: always
     ports:
       - ${REDIS_PORT}:6379
-    networks:
-      - default
