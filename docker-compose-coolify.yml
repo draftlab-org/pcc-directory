@@ -31,6 +31,26 @@ services:
       - MAP_STYLE=${MAP_STYLE}
       - DJANGO_SETTINGS_MODULE=cmdi.settings
     restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgis/postgis:13-3.1
+    container_name: platform-coop-directory_db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-U", "${POSTGRES_DB}"]
+      timeout: 60s
+      interval: 10s
+      retries: 10
+    ports:
+      - ${POSTGRES_PORT}:5432
+    restart: always
+    networks:
+      - default
 
   redis:
     image: redis/redis-stack:latest
