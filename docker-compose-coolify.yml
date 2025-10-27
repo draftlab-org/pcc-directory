@@ -38,7 +38,7 @@ services:
     image: postgis/postgis:13-3.1
     container_name: platform-coop-directory_db
     volumes:
-      - "/etc/databases/directory:/var/lib/mysql"
+      - "/etc/databases/directory:/var/lib/postgresql/data"
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -51,8 +51,6 @@ services:
     ports:
       - ${POSTGRES_PORT}:5432
     restart: always
-    networks:
-      - default
 
   redis:
     image: redis/redis-stack:latest
